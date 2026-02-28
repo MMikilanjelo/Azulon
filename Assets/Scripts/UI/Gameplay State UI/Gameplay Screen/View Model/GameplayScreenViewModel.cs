@@ -6,9 +6,9 @@ namespace UI.Gameplay_State_UI.Gameplay_Screen.View_Model
 {
     public class GameplayScreenViewModel : ScreenViewModelBase, IGameplayScreenViewModel
     {
-        private readonly IGameplayScreenUIModel _model;
+        private readonly IGameplayScreenModel _model;
 
-        public GameplayScreenViewModel(IGameplayScreenUIModel model)
+        public GameplayScreenViewModel(IGameplayScreenModel model)
         {
             _model = model;
         }

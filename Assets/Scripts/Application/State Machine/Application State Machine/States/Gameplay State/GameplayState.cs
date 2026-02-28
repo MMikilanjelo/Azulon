@@ -12,12 +12,17 @@ using Infrastructure.Factory_Provider.Factories;
 using Infrastructure.Factory_Provider.Factories.Game_Factory;
 using Infrastructure.Factory_Provider.Factories.UI_Factory.Interfaces;
 using Infrastructure.Services.Grid_Service;
+using UI.Gameplay_State_UI.Shop_Popup_View.View_Model;
 using UI.Screen_Mediator;
 using UnityEngine;
 
 namespace Application.State_Machine.Application_State_Machine.States.Gameplay_State
 {
-    public class GameplayState : ApplicationStateBase, IEnterState, IExitState, IGameplayScreenUIModel
+    public class GameplayState : ApplicationStateBase,
+        IEnterState,
+        IExitState,
+        IGameplayScreenModel,
+        IShopPopupModel
     {
         private readonly IFactoryProvider _factoryProvider;
         private readonly IScreenMediator _screenMediator;
@@ -45,11 +50,9 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
         public async void Enter()
         {
             _subscriptions = new CompositeDisposable();
-
             _gridModel ??= new GridModel(320, 320);
 
             _uiFactory = _factoryProvider.GetFactoryById<IGameplayStateUIFactory>(FactoryId.UI);
-
             _gameFactory = _factoryProvider.GetFactoryById<IGameFactory>(FactoryId.Game);
 
             _screenMediator.Push(parent => _uiFactory.CreateGameplayScreen(parent, this)).Forget();
@@ -72,6 +75,7 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
 
         public void OpenShop()
         {
+            _uiFactory.CreateShowPopup(_screenMediator.ScreenRoot, this).Forget();
         }
 
         private void OnItemPlaced()

@@ -4,11 +4,11 @@ using UI.Abstractions.Interfaces;
 
 namespace UI.Abstractions
 {
-    public abstract class ScreenViewModelBase : IScreenViewModel
+    public abstract class PopupViewModelBase : IPopupViewModel
     {
         public IReadOnlyReactiveProperty<bool> IsVisible => _isVisible;
 
-        private readonly ReactiveProperty<bool> _isVisible = new();
+        readonly ReactiveProperty<bool> _isVisible = new();
 
         public void Show() =>
             _isVisible.Value = true;

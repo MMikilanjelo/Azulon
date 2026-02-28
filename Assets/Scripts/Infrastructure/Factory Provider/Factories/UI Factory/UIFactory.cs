@@ -6,13 +6,15 @@ using Infrastructure.Factory_Provider.Factories.Interfaces;
 using Infrastructure.Factory_Provider.Factories.UI_Factory.Interfaces;
 using UI.Gameplay_State_UI.Gameplay_Screen.View_Model;
 using UI.Gameplay_State_UI.Gameplay_Screen.View;
+using UI.Gameplay_State_UI.Shop_Popup_View.View_Model;
+using UI.Gameplay_State_UI.Shop_Popup_View.View;
 using UI.Main_Menu_State_UI.Main_Menu_Screen.View_Model;
 using UI.Main_Menu_State_UI.Main_Menu_Screen.View;
 using UnityEngine;
 
 namespace Infrastructure.Factory_Provider.Factories.UI_Factory
 {
-    public class UIFactory : IFactory, IMainMenuStateUIFactory , IGameplayStateUIFactory
+    public class UIFactory : IMainMenuStateUIFactory, IGameplayStateUIFactory
     {
         private readonly IAssetProvider _assetProvider;
 
@@ -34,7 +36,7 @@ namespace Infrastructure.Factory_Provider.Factories.UI_Factory
             return viewModel;
         }
 
-        public async Task<IGameplayScreenViewModel> CreateGameplayScreen(Transform parent, IGameplayScreenUIModel model)
+        public async Task<IGameplayScreenViewModel> CreateGameplayScreen(Transform parent, IGameplayScreenModel model)
         {
             var viewModel = new GameplayScreenViewModel(model);
 
@@ -44,6 +46,19 @@ namespace Infrastructure.Factory_Provider.Factories.UI_Factory
 
             view.Bind(viewModel);
 
+            return viewModel;
+        }
+
+        public async Task<IShopPopupViewModel> CreateShowPopup(Transform parent, IShopPopupModel model)
+        {
+            var viewModel = new ShopPopupViewModel(model);
+
+            var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.ShopPopupView);
+
+            var view = Object.Instantiate(prefab, parent).GetComponent<ShopPopupView>();
+
+            view.Bind(viewModel);
+            
             return viewModel;
         }
     }

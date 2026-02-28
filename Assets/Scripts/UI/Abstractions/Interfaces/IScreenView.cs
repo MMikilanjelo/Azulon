@@ -1,7 +1,6 @@
 namespace UI.Abstractions.Interfaces
 {
-    public interface IScreenView<in TViewModel> where TViewModel : IScreenViewModel
+    public interface IScreenView<in TViewModel> : IView<TViewModel> where TViewModel : IScreenViewModel
     {
-        void Bind(TViewModel viewModel);
     }
 }
