@@ -1,4 +1,4 @@
-using Features.Grid_Item;
+using Features.Plant;
 using Infrastructure.Drag_Position_Provider;
 using UnityEngine;
 
@@ -8,12 +8,12 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
     {
         private readonly IDragPositionProvider _positionProvider;
 
-        private GridItem _current;
+        private PlantModel _current;
 
         public DragGridItemUseCase(IDragPositionProvider positionProvider) =>
             _positionProvider = positionProvider;
 
-        public void StartDrag(GridItem view) =>
+        public void StartDrag(PlantModel view) =>
             _current = view;
 
         public void StopDrag() =>

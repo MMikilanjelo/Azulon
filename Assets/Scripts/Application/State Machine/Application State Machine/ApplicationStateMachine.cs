@@ -6,7 +6,9 @@ using Infrastructure.Drag_Position_Provider;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Services.Grid_Service;
 using Infrastructure.Update_Loop_Service;
-using UI.Screen_Mediator;
+using UI.Gameplay_State_UI.Mediator;
+using UI.Main_Menu_State_UI.Mediator;
+using UI.UI_Root.Mediator.Interfaces;
 using UnityEditor.SceneManagement;
 
 namespace Application.State_Machine.Application_State_Machine
@@ -15,21 +17,28 @@ namespace Application.State_Machine.Application_State_Machine
     {
         public ApplicationStateMachine(
             IFactoryProvider factoryProvider,
-            IScreenMediator screenMediator,
+            IScreenStackMediator screenStackMediator,
             IGridService gridService,
             IDragPositionProvider dragPositionProvider,
             ITimeService timeService
         )
         {
-            var mainState = new MainMenuState(this, factoryProvider, screenMediator);
+            var mainStateMediator = new MainMenuStateUIMediator(factoryProvider, screenStackMediator);
+
+            var mainState = new MainMenuState(
+                this,
+                mainStateMediator
+            );
+
+            var gameplayStateMediator = new GameplayStateUIMediator(factoryProvider, screenStackMediator);
 
             var gameplayState = new GameplayState(
                 this,
                 factoryProvider,
-                screenMediator,
                 gridService,
                 dragPositionProvider,
-                timeService
+                timeService,
+                gameplayStateMediator
             );
 
             RegisterState(mainState);

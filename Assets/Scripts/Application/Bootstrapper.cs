@@ -7,7 +7,7 @@ using Infrastructure.Services;
 using Infrastructure.Services.Grid_Service;
 using Infrastructure.Services.Scene_Loading_Service;
 using Infrastructure.Update_Loop_Service;
-using UI.Screen_Mediator;
+using UI.UI_Root.Mediator;
 using UnityEngine;
 
 namespace Application
@@ -36,6 +36,7 @@ namespace Application
             var stateMachine = new GlobalStateMachine(
                 sceneLoadingService,
                 factoryProvider,
+                screenMediator,
                 screenMediator,
                 gridService,
                 dragPositionProvider,

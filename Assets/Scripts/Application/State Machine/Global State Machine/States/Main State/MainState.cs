@@ -9,7 +9,7 @@ using Infrastructure.Factory_Provider;
 using Infrastructure.Services.Grid_Service;
 using Infrastructure.Update_Loop_Service;
 using TMPro.EditorUtilities;
-using UI.Screen_Mediator;
+using UI.UI_Root.Mediator.Interfaces;
 
 namespace Application.State_Machine.Global_State_Machine.States.Main_State
 {
@@ -20,7 +20,7 @@ namespace Application.State_Machine.Global_State_Machine.States.Main_State
         public MainState(
             IGlobalStateMachine stateMachine,
             IFactoryProvider factoryProvider,
-            IScreenMediator screenMediator,
+            IScreenStackMediator screenStackMediator,
             IGridService gridService,
             IDragPositionProvider dragPositionProvider,
             ITimeService timeService
@@ -28,7 +28,7 @@ namespace Application.State_Machine.Global_State_Machine.States.Main_State
         {
             _applicationStateMachine = new ApplicationStateMachine(
                 factoryProvider,
-                screenMediator,
+                screenStackMediator,
                 gridService,
                 dragPositionProvider,
                 timeService

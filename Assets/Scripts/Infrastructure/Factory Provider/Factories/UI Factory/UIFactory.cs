@@ -1,20 +1,19 @@
 using System.Threading.Tasks;
-using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Interfaces;
-using Application.State_Machine.Application_State_Machine.States.Main_Menu_State.Interfaces;
 using Infrastructure.Asset_Provider;
-using Infrastructure.Factory_Provider.Factories.Interfaces;
 using Infrastructure.Factory_Provider.Factories.UI_Factory.Interfaces;
-using UI.Gameplay_State_UI.Gameplay_Screen.View_Model;
-using UI.Gameplay_State_UI.Gameplay_Screen.View;
-using UI.Gameplay_State_UI.Shop_Popup_View.View_Model;
-using UI.Gameplay_State_UI.Shop_Popup_View.View;
-using UI.Main_Menu_State_UI.Main_Menu_Screen.View_Model;
-using UI.Main_Menu_State_UI.Main_Menu_Screen.View;
+using UI.Abstractions;
+using UI.Gameplay_State_UI.Mediator.Interfaces;
+using UI.Gameplay_State_UI.Views;
+using UI.Main_Menu_State_UI.Mediator.Interfaces;
+using UI.Main_Menu_State_UI.Views;
 using UnityEngine;
 
 namespace Infrastructure.Factory_Provider.Factories.UI_Factory
 {
-    public class UIFactory : IMainMenuStateUIFactory, IGameplayStateUIFactory
+    public class UIFactory :
+        IMainMenuStateUIFactory,
+        IGameplayStateUIFactory,
+        IInventoryUIFactory
     {
         private readonly IAssetProvider _assetProvider;
 
@@ -23,43 +22,59 @@ namespace Infrastructure.Factory_Provider.Factories.UI_Factory
             _assetProvider = assetProvider;
         }
 
-        public async Task<IMainMenuScreenViewModel> CreateMainMenuScreen(Transform parent, IMainMenuScreenModel model)
+        public async Task<IScreenView> CreateMainMenuScreen(Transform parent, IMainMenuScreenMediator mediator)
         {
-            var viewModel = new MainMenuScreenViewModel(model);
-
             var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.MainMenuScreenView);
 
             var view = Object.Instantiate(prefab, parent).GetComponent<MainMenuScreenView>();
 
-            view.Bind(viewModel);
+            view.Construct(mediator);
 
-            return viewModel;
+            return view;
         }
 
-        public async Task<IGameplayScreenViewModel> CreateGameplayScreen(Transform parent, IGameplayScreenModel model)
+        public async Task<IScreenView> CreateGameplayScreen(Transform parent, IGameplayScreenMediator mediator)
         {
-            var viewModel = new GameplayScreenViewModel(model);
-
             var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.GameplayScreenView);
 
             var view = Object.Instantiate(prefab, parent).GetComponent<GameplayScreenView>();
 
-            view.Bind(viewModel);
+            view.Construct(mediator);
 
-            return viewModel;
+            return view;
         }
 
-        public async Task<IShopPopupViewModel> CreateShopPopup(Transform parent, IShopPopupModel model)
+        public async Task<IScreenView> CreateShopPopup(Transform parent, IShopPopupMediator mediator)
         {
-            var viewModel = new ShopPopupViewModel(model);
-
             var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.ShopPopupView);
 
             var view = Object.Instantiate(prefab, parent).GetComponent<ShopPopupView>();
 
-            view.Bind(viewModel);
-            
-            return viewModel;
+            view.Construct(mediator);
+
+            return view;
         }
+
+        public async Task<IScreenView> CreateInventoryPopup(Transform parent, IInventoryPopupMediator mediator)
+        {
+            var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.InventoryPopupView);
+
+            var view = Object.Instantiate(prefab, parent).GetComponent<InventoryPopupView>();
+
+            view.Construct(mediator);
+
+            return view;
+        }
+
+        // public async Task<InventoryItemView> CreateInventoryItemView(Transform parent, IInventoryItemViewModel viewModel)
+        // {
+        //     var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.InventoryItemView);
+        //
+        //     var view = Object.Instantiate(prefab, parent).GetComponent<InventoryItemView>();
+        //
+        //     view.Bind(viewModel);
+        //
+        //     return view;
+        // }
     }
 }

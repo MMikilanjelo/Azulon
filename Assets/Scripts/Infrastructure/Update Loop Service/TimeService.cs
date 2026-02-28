@@ -6,6 +6,7 @@ namespace Infrastructure.Update_Loop_Service
 {
     public class TimeService : MonoBehaviour, ITimeService
     {
+        public float DeltaTime => Time.deltaTime;
         public IReadOnlyReactiveEvent<float> UpdateTicked => _updateTicked;
 
         private readonly ReactiveEvent<float> _updateTicked = new();

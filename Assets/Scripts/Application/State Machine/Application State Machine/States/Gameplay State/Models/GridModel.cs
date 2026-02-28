@@ -1,42 +1,69 @@
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Core.Registries;
-using Features.Grid_Item;
+using Features.Plant;
 using UnityEngine;
 
 namespace Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models
 {
-    public class GridModel
+    public class GridModel : IGridModel
     {
-        public IRegistry<GridItemView> Registry => _gridItemRegistry;
+        public IRegistry<PlantModel> Registry => _gridItemRegistry;
         public int Width { get; }
         public int Height { get; }
+        public int MinX { get; }
+        public int MaxX { get; }
+        public int MinY { get; }
+        public int MaxY { get; }
 
-        private readonly Registry<GridItemView> _gridItemRegistry = new();
+        private readonly Registry<PlantModel> _gridItemRegistry = new();
 
         public GridModel(int width, int height)
         {
             Width = width;
             Height = height;
+
+            MinX = -Mathf.FloorToInt(width / 2f);
+
+            MaxX = MinX + width - 1;
+
+            MinY = -Mathf.FloorToInt(height / 2f);
+
+            MaxY = MinY + height - 1;
         }
 
-        // public bool IsCellOccupied(Vector2Int gridOrigin, Vector2Int coords)
-        // {
-        //     return Registry.Query(items => items.Any(item =>
-        //         item.OccupiedOffsets.Any(offset => gridOrigin + offset == coords)));
-        // }
-        //
-        // public GridItemView GetItemAt(Vector2Int gridOrigin, Vector2Int coords)
-        // {
-        //     return Registry.Query(items => items.FirstOrDefault(item =>
-        //         item.OccupiedOffsets.Any(offset => gridOrigin + offset == coords)));
-        // }
-
         public bool IsInBounds(Vector2Int coords) =>
-            coords.x >= 0 && coords.x < Width && coords.y >= 0 && coords.y < Height;
+            coords.x >= MinX && coords.x <= MaxX &&
+            coords.y >= MinY && coords.y <= MaxY;
 
-        public void AddItem(GridItemView gridItem) =>
-            _gridItemRegistry.TryAdd(gridItem);
+        public PlantModel GetItemAt(Vector2Int cell)
+        {
+            return _gridItemRegistry.Query(items => items.FirstOrDefault(item =>
+                item.Definition.ShapeOffsets.Any(offset => item.GridPosition.Value + offset == cell)));
+        }
+
+        public bool CanPlaceItem(PlantModel item, Vector2Int targetOrigin)
+        {
+            foreach (var offset in item.Definition.ShapeOffsets)
+            {
+                var targetCell = targetOrigin + offset;
+
+                if (!IsInBounds(targetCell))
+                {
+                    return false;
+                }
+
+                var occupant = GetItemAt(targetCell);
+
+                if (occupant != null && occupant != item)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public void RegisterItem(PlantModel item) =>
+            _gridItemRegistry.TryAdd(item);
     }
 }

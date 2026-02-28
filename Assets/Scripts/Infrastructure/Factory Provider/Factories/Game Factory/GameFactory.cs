@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Features.Grid_Item;
-using Features.Grid_Item.Definitions;
+using Features.Plant;
+using Features.Plant.Definitions;
 using Infrastructure.Asset_Provider;
 using UnityEngine;
 
@@ -16,13 +16,13 @@ namespace Infrastructure.Factory_Provider.Factories.Game_Factory
             _assetProvider = assetProvider;
         }
 
-        public async Task<GridItemView> CreateGridItem(Transform parent, Vector3 position)
+        public async Task<PlantView> CreatePlant(Transform parent, Vector3 position)
         {
-            var definition = await _assetProvider.LoadAsync<GridItemDefinition>(AssetAddress.SquareDefinition);
+            var definition = await _assetProvider.LoadAsync<GridItemDefinition>(AssetAddress.AppleDefinition);
 
-            var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.GridItemView);
+            var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.Plant);
 
-            var view = Object.Instantiate(prefab, position, Quaternion.identity).GetComponent<GridItemView>();
+            var view = Object.Instantiate(prefab, position, Quaternion.identity).GetComponent<PlantView>();
 
             view.transform.SetParent(parent, false);
 
@@ -30,7 +30,7 @@ namespace Infrastructure.Factory_Provider.Factories.Game_Factory
 
             var centerOffset = new Vector3(0.5f, 0.5f, 0f);
 
-            foreach (var shape in definition.Shape)
+            foreach (var shape in definition.ShapeOffsets)
             {
                 blockViews.Add(await CreateGridBlockView(
                     view.transform,
@@ -40,11 +40,9 @@ namespace Infrastructure.Factory_Provider.Factories.Game_Factory
                 ));
             }
 
-            var model = new GridItem(definition);
+            var model = new PlantModel(definition, Vector2Int.zero, position);
 
             view.Construct(blockViews, model);
-            
-            model.UpdateWorldPosition(position);
 
             return view;
         }

@@ -1,45 +1,37 @@
 using Application.State_Machine.Application_State_Machine.Abstractions;
 using Application.State_Machine.Application_State_Machine.Abstractions.Interfaces;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State;
-using Application.State_Machine.Application_State_Machine.States.Main_Menu_State.Interfaces;
 using Core.Extensions;
 using Core.State_Machine.States;
 using Infrastructure.Factory_Provider;
-using Infrastructure.Factory_Provider.Factories;
-using Infrastructure.Factory_Provider.Factories.UI_Factory.Interfaces;
-using UI.Screen_Mediator;
+using UI.Main_Menu_State_UI.Mediator.Interfaces;
 
 namespace Application.State_Machine.Application_State_Machine.States.Main_Menu_State
 {
-    public class MainMenuState : ApplicationStateBase, IEnterState, IExitState, IMainMenuScreenModel
+    public class MainMenuState : ApplicationStateBase, IEnterState, IExitState
     {
         private readonly IFactoryProvider _factoryProvider;
 
-        private IMainMenuStateUIFactory _factory;
-
-        private readonly IScreenMediator _screenMediator;
+        private readonly IMainMenuStateUIMediator _uiMediator;
 
         public MainMenuState(
             IApplicationStateMachine stateMachine,
-            IFactoryProvider factoryProvider,
-            IScreenMediator screenMediator
+            IMainMenuStateUIMediator uiMediator
         ) : base(stateMachine)
         {
-            _factoryProvider = factoryProvider;
-            _screenMediator = screenMediator;
+            _uiMediator = uiMediator;
         }
 
         public void Enter()
         {
-            _factory = _factoryProvider.GetFactoryById<IMainMenuStateUIFactory>(FactoryId.UI);
-
-            _screenMediator.Push(parent => _factory.CreateMainMenuScreen(parent, this)).Forget();
+            _uiMediator.Initialize(this);
+            _uiMediator.CreateMainMenuScreen().Forget();
         }
 
         public void StartGame() =>
             StateMachine.Enter<GameplayState>();
 
         public void Exit() =>
-            _screenMediator.Pop();
+            _uiMediator.Dispose();
     }
 }

@@ -8,7 +8,7 @@ using Infrastructure.Services;
 using Infrastructure.Services.Grid_Service;
 using Infrastructure.Services.Scene_Loading_Service;
 using Infrastructure.Update_Loop_Service;
-using UI.Screen_Mediator;
+using UI.UI_Root.Mediator.Interfaces;
 using Unity.VisualScripting;
 
 namespace Application.State_Machine.Global_State_Machine
@@ -18,7 +18,8 @@ namespace Application.State_Machine.Global_State_Machine
         public GlobalStateMachine(
             ISceneLoadingService sceneLoadingService,
             IFactoryProvider factoryProvider,
-            IScreenMediator screenMediator,
+            IScreenStackMediator screenStackMediator,
+            IUIRootMediator uiRootMediator,
             IGridService gridService,
             IDragPositionProvider dragPositionProvider,
             ITimeService timeService
@@ -28,13 +29,13 @@ namespace Application.State_Machine.Global_State_Machine
                 this,
                 sceneLoadingService,
                 factoryProvider,
-                screenMediator
+                uiRootMediator
             );
 
             var mainState = new MainState(
                 this,
                 factoryProvider,
-                screenMediator,
+                screenStackMediator,
                 gridService,
                 dragPositionProvider,
                 timeService
