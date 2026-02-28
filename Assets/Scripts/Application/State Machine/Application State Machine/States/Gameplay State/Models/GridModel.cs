@@ -21,17 +21,17 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
             Height = height;
         }
 
-        public bool IsCellOccupied(Vector2Int gridOrigin, Vector2Int coords)
-        {
-            return Registry.Query(items => items.Any(item =>
-                item.OccupiedOffsets.Any(offset => gridOrigin + offset == coords)));
-        }
-
-        public GridItemView GetItemAt(Vector2Int gridOrigin, Vector2Int coords)
-        {
-            return Registry.Query(items => items.FirstOrDefault(item =>
-                item.OccupiedOffsets.Any(offset => gridOrigin + offset == coords)));
-        }
+        // public bool IsCellOccupied(Vector2Int gridOrigin, Vector2Int coords)
+        // {
+        //     return Registry.Query(items => items.Any(item =>
+        //         item.OccupiedOffsets.Any(offset => gridOrigin + offset == coords)));
+        // }
+        //
+        // public GridItemView GetItemAt(Vector2Int gridOrigin, Vector2Int coords)
+        // {
+        //     return Registry.Query(items => items.FirstOrDefault(item =>
+        //         item.OccupiedOffsets.Any(offset => gridOrigin + offset == coords)));
+        // }
 
         public bool IsInBounds(Vector2Int coords) =>
             coords.x >= 0 && coords.x < Width && coords.y >= 0 && coords.y < Height;

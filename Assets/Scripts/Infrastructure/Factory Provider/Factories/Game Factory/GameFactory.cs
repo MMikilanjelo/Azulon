@@ -40,7 +40,11 @@ namespace Infrastructure.Factory_Provider.Factories.Game_Factory
                 ));
             }
 
-            view.Construct(blockViews, definition);
+            var model = new GridItem(definition);
+
+            view.Construct(blockViews, model);
+            
+            model.UpdateWorldPosition(position);
 
             return view;
         }

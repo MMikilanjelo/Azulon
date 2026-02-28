@@ -49,7 +49,7 @@ namespace Infrastructure.Factory_Provider.Factories.UI_Factory
             return viewModel;
         }
 
-        public async Task<IShopPopupViewModel> CreateShowPopup(Transform parent, IShopPopupModel model)
+        public async Task<IShopPopupViewModel> CreateShopPopup(Transform parent, IShopPopupModel model)
         {
             var viewModel = new ShopPopupViewModel(model);
 

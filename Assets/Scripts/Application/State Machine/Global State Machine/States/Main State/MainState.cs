@@ -4,8 +4,10 @@ using Application.State_Machine.Application_State_Machine.States.Main_Menu_State
 using Application.State_Machine.Global_State_Machine.Abstractions;
 using Application.State_Machine.Global_State_Machine.Abstractions.Interfaces;
 using Core.State_Machine.States;
+using Infrastructure.Drag_Position_Provider;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Services.Grid_Service;
+using Infrastructure.Update_Loop_Service;
 using TMPro.EditorUtilities;
 using UI.Screen_Mediator;
 
@@ -19,13 +21,17 @@ namespace Application.State_Machine.Global_State_Machine.States.Main_State
             IGlobalStateMachine stateMachine,
             IFactoryProvider factoryProvider,
             IScreenMediator screenMediator,
-            IGridService gridService
+            IGridService gridService,
+            IDragPositionProvider dragPositionProvider,
+            ITimeService timeService
         ) : base(stateMachine)
         {
             _applicationStateMachine = new ApplicationStateMachine(
                 factoryProvider,
                 screenMediator,
-                gridService
+                gridService,
+                dragPositionProvider,
+                timeService
             );
         }
 

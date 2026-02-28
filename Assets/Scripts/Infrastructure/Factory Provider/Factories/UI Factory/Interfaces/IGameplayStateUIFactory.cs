@@ -11,6 +11,6 @@ namespace Infrastructure.Factory_Provider.Factories.UI_Factory.Interfaces
     public interface IGameplayStateUIFactory : IFactory
     {
         Task<IGameplayScreenViewModel> CreateGameplayScreen(Transform parent, IGameplayScreenModel model);
-        Task<IShopPopupViewModel> CreateShowPopup(Transform parent, IShopPopupModel model);
+        Task<IShopPopupViewModel> CreateShopPopup(Transform parent, IShopPopupModel model);
     }
 }

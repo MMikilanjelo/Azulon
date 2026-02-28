@@ -2,17 +2,18 @@ using Application.State_Machine.Application_State_Machine.Abstractions;
 using Application.State_Machine.Application_State_Machine.Abstractions.Interfaces;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Interfaces;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Drag_Grid_Item_Use_Case;
 using Core.Disposables;
 using Core.Extensions;
-using Core.Reactive.Events;
 using Core.State_Machine.States;
 using Features.Grid_Item;
+using Infrastructure.Drag_Position_Provider;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Factory_Provider.Factories;
 using Infrastructure.Factory_Provider.Factories.Game_Factory;
 using Infrastructure.Factory_Provider.Factories.UI_Factory.Interfaces;
 using Infrastructure.Services.Grid_Service;
-using UI.Gameplay_State_UI.Shop_Popup_View.View_Model;
+using Infrastructure.Update_Loop_Service;
 using UI.Screen_Mediator;
 using UnityEngine;
 
@@ -27,6 +28,7 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
         private readonly IFactoryProvider _factoryProvider;
         private readonly IScreenMediator _screenMediator;
         private readonly IGridService _gridService;
+        private readonly ITimeService _timeService;
 
         private IGameFactory _gameFactory;
         private IGameplayStateUIFactory _uiFactory;
@@ -35,16 +37,23 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
 
         private CompositeDisposable _subscriptions;
 
+        private readonly IDragGridItemUseCase _dragGridItemUseCase;
+
         public GameplayState(
             IApplicationStateMachine stateMachine,
             IFactoryProvider factoryProvider,
             IScreenMediator screenMediator,
-            IGridService gridService
+            IGridService gridService,
+            IDragPositionProvider dragPositionProvider,
+            ITimeService timeService
         ) : base(stateMachine)
         {
             _factoryProvider = factoryProvider;
             _screenMediator = screenMediator;
             _gridService = gridService;
+            _timeService = timeService;
+
+            _dragGridItemUseCase = new DragGridItemUseCase(dragPositionProvider);
         }
 
         public async void Enter()
@@ -62,6 +71,9 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
             _gridModel.AddItem(gridItem);
 
             _subscriptions.Add(gridItem.DragEnded.Subscribe(OnItemDragEnded));
+            _subscriptions.Add(gridItem.DragStarted.Subscribe(OnItemGridStarted));
+
+            _subscriptions.Add(_timeService.UpdateTicked.Subscribe(OnUpdateTicked));
         }
 
         public void Exit()
@@ -73,24 +85,30 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
         {
         }
 
-        public void OpenShop()
+        public async void OpenShop()
         {
-            _uiFactory.CreateShowPopup(_screenMediator.ScreenRoot, this).Forget();
+            var viewModel = await _uiFactory.CreateShopPopup(_screenMediator.ScreenRoot, this);
+
+            viewModel.Show();
         }
 
-        private void OnItemPlaced()
+        private void OnItemDragEnded(GridItem item)
         {
-        }
+            _dragGridItemUseCase.StopDrag();
 
-        private void OnItemDragEnded(GridItemView view)
-        {
-            var worldPos = view.transform.position;
-
-            var gridPos = _gridService.WorldToGrid(worldPos);
+            var gridPos = _gridService.WorldToGrid(item.WorldPosition.Value);
 
             var finalPos = _gridService.GridToWorld(gridPos);
 
-            view.SlideTo(finalPos);
+            item.UpdateGridPosition(gridPos);
+            
+            item.UpdateWorldPosition(finalPos);
         }
+
+        private void OnItemGridStarted(GridItem view) =>
+            _dragGridItemUseCase.StartDrag(view);
+
+        private void OnUpdateTicked(float deltaTime) =>
+            _dragGridItemUseCase.UpdateItemPosition(deltaTime);
     }
 }

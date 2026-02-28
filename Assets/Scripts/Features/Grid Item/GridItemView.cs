@@ -1,27 +1,21 @@
 ﻿using System.Collections.Generic;
 using Core.Reactive;
-using Core.Reactive.Events;
 using Core.Reactive.Interfaces;
 using DG.Tweening;
-using Features.Grid_Item.Definitions;
-using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 
 namespace Features.Grid_Item
 {
     public class GridItemView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
-        public IReadOnlyReactiveEvent<GridItemView> DragEnded => _dragEnded;
-        public IReadOnlyReactiveEvent<GridItemView> DragStarted => _dragStarted;
-        public IReadOnlyCollection<Vector2Int> OccupiedOffsets => _definition.Shape;
+        public IReadOnlyReactiveEvent<GridItem> DragEnded => _dragEnded;
+        public IReadOnlyReactiveEvent<GridItem> DragStarted => _dragStarted;
+        public GridItem Model { get; private set; }
 
-        private readonly ReactiveEvent<GridItemView> _dragEnded = new();
+        private readonly ReactiveEvent<GridItem> _dragEnded = new();
 
-        private readonly ReactiveEvent<GridItemView> _dragStarted = new();
-
-        private Camera _mainCamera;
+        private readonly ReactiveEvent<GridItem> _dragStarted = new();
 
         private bool _isDragging;
 
@@ -29,45 +23,22 @@ namespace Features.Grid_Item
 
         private List<GridBlockView> _blockViews;
 
-        private GridItemDefinition _definition;
-
-        private void Awake() =>
-            _mainCamera = Camera.main;
-
-        public void Construct(List<GridBlockView> blockViews, GridItemDefinition definition)
+        public void Construct(
+            List<GridBlockView> blockViews,
+            GridItem item
+        )
         {
             _blockViews = blockViews;
             
-            _definition = definition;
+            Model = item;
+            Model.WorldPosition.Subscribe(OnWorldPositionValueChanged);
         }
 
-        private void Update()
-        {
-            if (!_isDragging)
-            {
-                return;
-            }
-
-            var screenPos = Pointer.current.position.ReadValue();
-
-            var worldPos = _mainCamera.ScreenToWorldPoint(screenPos);
-
-            worldPos.z = 0f;
-
-            var targetPos = worldPos - new Vector3(0.5f, 0.5f, 0f);
-
-            transform.position = Vector3.Lerp(transform.position, targetPos, 22f * Time.deltaTime);
-        }
+        private void OnWorldPositionValueChanged(Vector3 newPosition) =>
+            transform.position = newPosition;
 
         public void OnPointerDown(PointerEventData eventData) =>
             BeginDrag();
-
-        public void SlideTo(Vector2 finalPos)
-        {
-            transform.DOKill();
-
-            transform.DOMove(finalPos, 0.2f).SetEase(Ease.OutCubic);
-        }
 
         public void OnPointerUp(PointerEventData eventData)
         {
@@ -81,14 +52,14 @@ namespace Features.Grid_Item
         {
             _isDragging = true;
 
-            _dragStarted?.Invoke(this);
+            _dragStarted?.Invoke(Model);
         }
 
         private void EndDrag()
         {
             _isDragging = false;
 
-            _dragEnded?.Invoke(this);
+            _dragEnded?.Invoke(Model);
         }
     }
 }

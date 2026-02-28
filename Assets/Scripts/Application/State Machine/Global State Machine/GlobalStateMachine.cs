@@ -2,10 +2,12 @@
 using Application.State_Machine.Global_State_Machine.States.Boot_State;
 using Application.State_Machine.Global_State_Machine.States.Main_State;
 using Core.State_Machine;
+using Infrastructure.Drag_Position_Provider;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Services;
 using Infrastructure.Services.Grid_Service;
 using Infrastructure.Services.Scene_Loading_Service;
+using Infrastructure.Update_Loop_Service;
 using UI.Screen_Mediator;
 using Unity.VisualScripting;
 
@@ -17,7 +19,9 @@ namespace Application.State_Machine.Global_State_Machine
             ISceneLoadingService sceneLoadingService,
             IFactoryProvider factoryProvider,
             IScreenMediator screenMediator,
-            IGridService gridService
+            IGridService gridService,
+            IDragPositionProvider dragPositionProvider,
+            ITimeService timeService
         )
         {
             var bootState = new BootState(
@@ -31,7 +35,9 @@ namespace Application.State_Machine.Global_State_Machine
                 this,
                 factoryProvider,
                 screenMediator,
-                gridService
+                gridService,
+                dragPositionProvider,
+                timeService
             );
 
             RegisterState(bootState);
