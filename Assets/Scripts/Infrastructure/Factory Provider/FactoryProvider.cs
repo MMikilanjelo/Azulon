@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Infrastructure.Asset_Provider;
 using Infrastructure.Factory_Provider.Factories;
+using Infrastructure.Factory_Provider.Factories.Game_Factory;
 using Infrastructure.Factory_Provider.Factories.Interfaces;
 using Infrastructure.Factory_Provider.Factories.UI_Factory;
 using Infrastructure.Factory_Provider.Factories.UI_Root_Factory;
@@ -22,6 +23,7 @@ namespace Infrastructure.Factory_Provider
         {
             _factories.Add(FactoryId.UI, new UIFactory(_assetProvider));
             _factories.Add(FactoryId.UIRoot, new UIRootFactory(_assetProvider));
+            _factories.Add(FactoryId.Game, new GameFactory(_assetProvider));
         }
 
         public T GetFactoryById<T>(FactoryId id) where T : IFactory =>

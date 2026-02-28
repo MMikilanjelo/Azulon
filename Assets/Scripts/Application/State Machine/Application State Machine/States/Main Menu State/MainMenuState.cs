@@ -11,7 +11,7 @@ using UI.Screen_Mediator;
 
 namespace Application.State_Machine.Application_State_Machine.States.Main_Menu_State
 {
-    public class MainMenuState : ApplicationStateBase, IEnterState, IMainMenuScreenModel
+    public class MainMenuState : ApplicationStateBase, IEnterState, IExitState, IMainMenuScreenModel
     {
         private readonly IFactoryProvider _factoryProvider;
 
@@ -33,12 +33,13 @@ namespace Application.State_Machine.Application_State_Machine.States.Main_Menu_S
         {
             _factory = _factoryProvider.GetFactoryById<IMainMenuStateUIFactory>(FactoryId.UI);
 
-            _factory.CreateMainMenuScreen(_screenMediator.ScreenRoot, this).Forget();
+            _screenMediator.Push(parent => _factory.CreateMainMenuScreen(parent, this)).Forget();
         }
 
-        public void StartGame()
-        {
+        public void StartGame() =>
             StateMachine.Enter<GameplayState>();
-        }
+
+        public void Exit() =>
+            _screenMediator.Pop();
     }
 }

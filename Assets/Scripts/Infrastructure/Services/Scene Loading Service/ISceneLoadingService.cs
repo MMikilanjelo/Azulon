@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Infrastructure.Services.Scene_Loading_Service
@@ -7,5 +8,6 @@ namespace Infrastructure.Services.Scene_Loading_Service
     {
         Task LoadSceneAsync(string sceneName, LoadSceneMode mode = LoadSceneMode.Additive);
         Task UnloadSceneAsync(string sceneName);
+        void MoveGameObjectToScene(GameObject gameObject, string sceneName);
     }
 }

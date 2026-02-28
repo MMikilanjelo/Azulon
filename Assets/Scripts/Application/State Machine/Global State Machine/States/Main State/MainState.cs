@@ -5,6 +5,7 @@ using Application.State_Machine.Global_State_Machine.Abstractions;
 using Application.State_Machine.Global_State_Machine.Abstractions.Interfaces;
 using Core.State_Machine.States;
 using Infrastructure.Factory_Provider;
+using Infrastructure.Services.Grid_Service;
 using TMPro.EditorUtilities;
 using UI.Screen_Mediator;
 
@@ -17,12 +18,14 @@ namespace Application.State_Machine.Global_State_Machine.States.Main_State
         public MainState(
             IGlobalStateMachine stateMachine,
             IFactoryProvider factoryProvider,
-            IScreenMediator screenMediator
+            IScreenMediator screenMediator,
+            IGridService gridService
         ) : base(stateMachine)
         {
             _applicationStateMachine = new ApplicationStateMachine(
                 factoryProvider,
-                screenMediator
+                screenMediator,
+                gridService
             );
         }
 

@@ -4,6 +4,7 @@ using Application.State_Machine.Global_State_Machine.States.Main_State;
 using Core.State_Machine;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Services;
+using Infrastructure.Services.Grid_Service;
 using Infrastructure.Services.Scene_Loading_Service;
 using UI.Screen_Mediator;
 using Unity.VisualScripting;
@@ -15,7 +16,8 @@ namespace Application.State_Machine.Global_State_Machine
         public GlobalStateMachine(
             ISceneLoadingService sceneLoadingService,
             IFactoryProvider factoryProvider,
-            IScreenMediator screenMediator
+            IScreenMediator screenMediator,
+            IGridService gridService
         )
         {
             var bootState = new BootState(
@@ -28,7 +30,8 @@ namespace Application.State_Machine.Global_State_Machine
             var mainState = new MainState(
                 this,
                 factoryProvider,
-                screenMediator
+                screenMediator,
+                gridService
             );
 
             RegisterState(bootState);

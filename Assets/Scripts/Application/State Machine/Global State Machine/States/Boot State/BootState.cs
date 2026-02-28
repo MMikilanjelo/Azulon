@@ -31,8 +31,12 @@ namespace Application.State_Machine.Global_State_Machine.States.Boot_State
             _factoryProvider.Initialize();
 
             await _screenMediator.Initialize();
-            
+
             await _sceneLoadingService.LoadSceneAsync(SceneName.MainScene);
+
+            _sceneLoadingService.MoveGameObjectToScene(_screenMediator.ScreenRoot.gameObject, SceneName.MainScene);
+
+            await _sceneLoadingService.UnloadSceneAsync(SceneName.BootScene);
 
             StateMachine.Enter<MainState>();
         }

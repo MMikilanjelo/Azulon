@@ -4,6 +4,7 @@ namespace Infrastructure.Factory_Provider.Factories
     {
         None = 0,
         UI = 1,
-        UIRoot = 2
+        UIRoot = 2,
+        Game = 3,
     }
 }

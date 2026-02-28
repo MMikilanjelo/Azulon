@@ -16,7 +16,12 @@ namespace UI.Main_Menu_State_UI.Main_Menu_Screen.View
             _viewModel = viewModel;
 
             _startGameButton.onClick.AddListener(OnStartClicked);
+
+            _viewModel.VisibilityChanged.Subscribe(OnVisibilityChanged);
         }
+
+        private void OnVisibilityChanged(bool isVisible) =>
+            gameObject.SetActive(isVisible);
 
         private void OnStartClicked() =>
             _viewModel.OnPlayButtonClicked();

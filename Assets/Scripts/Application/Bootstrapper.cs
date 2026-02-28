@@ -3,6 +3,7 @@ using Application.State_Machine.Global_State_Machine.States.Boot_State;
 using Infrastructure.Asset_Provider;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Services;
+using Infrastructure.Services.Grid_Service;
 using Infrastructure.Services.Scene_Loading_Service;
 using UI.Screen_Mediator;
 using UnityEngine;
@@ -16,7 +17,9 @@ namespace Application
             DontDestroyOnLoad(gameObject);
 
             var assetProvider = new AssetProvider();
-            
+
+            var gridService = new GridService();
+
             var sceneLoadingService = new SceneLoadingService();
 
             var factoryProvider = new FactoryProvider(assetProvider);
@@ -26,7 +29,8 @@ namespace Application
             var stateMachine = new GlobalStateMachine(
                 sceneLoadingService,
                 factoryProvider,
-                screenMediator
+                screenMediator,
+                gridService
             );
 
             stateMachine.Enter<BootState>();

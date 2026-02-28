@@ -6,8 +6,17 @@ namespace UI.Gameplay_State_UI.Gameplay_Screen.View_Model
 {
     public class GameplayScreenViewModel : ScreenViewModelBase, IGameplayScreenViewModel
     {
+        private readonly IGameplayScreenUIModel _model;
+
         public GameplayScreenViewModel(IGameplayScreenUIModel model)
         {
+            _model = model;
         }
+
+        public void OnShowButtonClicked() =>
+            _model.OpenShop();
+
+        public void OnInventoryButtonClicked() =>
+            _model.OpenInventory();
     }
 }

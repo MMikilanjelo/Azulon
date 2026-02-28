@@ -2,6 +2,7 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
 {
     public interface IGameplayScreenUIModel
     {
-        
+        void OpenShop();
+        void OpenInventory();
     }
 }
