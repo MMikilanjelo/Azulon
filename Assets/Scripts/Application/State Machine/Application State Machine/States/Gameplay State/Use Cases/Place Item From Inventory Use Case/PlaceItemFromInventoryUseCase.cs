@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Application.State_Machine.Application_State_Machine.Models.Inventory_Models;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Definitions.Foods;
@@ -25,9 +26,9 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
                 return false;
             }
 
-            // var foodId = Enum.Parse<FoodId>(selectedItem.ItemId);
+            var foodId = Enum.Parse<FoodId>(selectedItem.ItemId);
 
-            var plant = await _gameFactory.CreateFood(FoodId.Honey, pos);
+            var plant = await _gameFactory.CreateFood(foodId, pos);
 
             plant.SetGridPosition(pos);
 

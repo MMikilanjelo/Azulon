@@ -23,6 +23,7 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
         public ResolveGridUseCase(IGridModel gridModel, IPlayerModel playerModel)
         {
             _gridModel = gridModel;
+            _playerModel = playerModel;
         }
 
         public GridResolutionResult Execute()

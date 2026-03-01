@@ -32,6 +32,7 @@ namespace UI.Gameplay_State_UI.Mediator
         public IReadOnlyReactiveEvent<EmptyEvent> FinishTurnClicked => _finishTurnClicked;
         public IReadOnlyReactiveEvent<InventoryItemModel> InventoryItemClicked => _inventoryItemClicked;
         public IReadOnlyReactiveEvent<int> PlayerGoldChanged => _playerGoldChanged;
+        public IReadOnlyReactiveEvent<ShopItemModel> ShopItemClicked => _shopItemClicked;
 
         private GameplayState _state;
         private IGameplayStateUIFactory _factory;
@@ -130,7 +131,7 @@ namespace UI.Gameplay_State_UI.Mediator
 
                 view.Setup(item.Icon, item.Title, item.Description, item.Price);
 
-                view.Clicked.Subscribe(OnShopItemClicked);
+                view.PurchaseButtonClicked.Subscribe(OnShopItemClicked);
 
                 _shopViews[view] = item;
             }

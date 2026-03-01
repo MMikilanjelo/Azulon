@@ -8,16 +8,19 @@ using UnityEngine.UI;
 
 namespace UI.Gameplay_State_UI.Views
 {
-    public class ShopItemView : MonoBehaviour, IPointerDownHandler
+    public class ShopItemView : MonoBehaviour
     {
         [SerializeField] private Image _itemIcon;
         [SerializeField] private TextMeshProUGUI _titleText;
         [SerializeField] private TextMeshProUGUI _descriptionText;
         [SerializeField] private TextMeshProUGUI _priceText;
+        [SerializeField] private Button _purchaseButton;
+        public IReadOnlyReactiveEvent<ShopItemView> PurchaseButtonClicked => _purchaseButtonClicked;
 
-        public IReadOnlyReactiveEvent<ShopItemView> Clicked => _clicked;
+        private readonly ReactiveEvent<ShopItemView> _purchaseButtonClicked = new();
 
-        private readonly ReactiveEvent<ShopItemView> _clicked = new();
+        public void Construct() =>
+            _purchaseButton.onClick.AddListener(OnPurchaseButtonClicked);
 
         public void Setup(
             Sprite icon,
@@ -32,13 +35,13 @@ namespace UI.Gameplay_State_UI.Views
             _priceText.text = price.ToString();
         }
 
-        public void OnPointerDown(PointerEventData eventData) =>
-            _clicked.Invoke(this);
-
         public void Destroy() =>
             Destroy(gameObject);
 
         private void OnDestroy() =>
-            _clicked.Dispose();
+            _purchaseButtonClicked.Dispose();
+
+        private void OnPurchaseButtonClicked() =>
+            _purchaseButtonClicked.Invoke(this);
     }
 }

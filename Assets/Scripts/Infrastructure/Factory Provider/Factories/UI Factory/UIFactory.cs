@@ -100,6 +100,8 @@ namespace Infrastructure.Factory_Provider.Factories.UI_Factory
 
             var view = Object.Instantiate(prefab, parent).GetComponent<ShopItemView>();
 
+            view.Construct();
+
             return view;
         }
     }

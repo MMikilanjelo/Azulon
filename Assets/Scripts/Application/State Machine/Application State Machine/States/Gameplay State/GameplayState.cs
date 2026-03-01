@@ -86,6 +86,7 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
             _uiMediator.InventoryItemClicked.Subscribe(OnInventoryItemSelected).AddTo(_subscriptions);
             _uiMediator.BoardCellClicked.Subscribe(cell => OnBoardCellClicked(cell).Forget()).AddTo(_subscriptions);
             _uiMediator.FinishTurnClicked.Subscribe(OnFinishTurnClicked).AddTo(_subscriptions);
+            _uiMediator.ShopItemClicked.Subscribe(OnShopItemClicked).AddTo(_subscriptions);
             _uiMediator.Initialize(this);
             _uiMediator.CreateGameplayScreen().Forget();
             _uiMediator.FillBoard(_gridModel.GetAllPositions()).Forget();
@@ -118,6 +119,24 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
             _inventoryModel.Remove(selectedItem);
 
             _deselectInventoryItemUseCase.Execute();
+        }
+
+        private void OnShopItemClicked(ShopItemModel itemToPurchaseModel)
+        {
+            var isPurchaseSucceed = _playerModel.TryPurchase(itemToPurchaseModel.Price);
+
+            if (!isPurchaseSucceed)
+            {
+                return;
+            }
+
+            var inventoryModel = new InventoryItemModel(
+                itemToPurchaseModel.ItemId,
+                itemToPurchaseModel.Category,
+                itemToPurchaseModel.Icon
+            );
+
+            _inventoryModel.Add(inventoryModel);
         }
 
         private void OnInventoryItemSelected(InventoryItemModel item) =>

@@ -5,6 +5,7 @@ namespace Application.State_Machine.Application_State_Machine.Models.Inventory_M
     public interface IInventoryModel
     {
         IReadOnlyReactiveList<InventoryItemModel> Items { get; }
+        void Add(InventoryItemModel selectedItem);
         void Remove(InventoryItemModel selectedItem);
     }
 }
