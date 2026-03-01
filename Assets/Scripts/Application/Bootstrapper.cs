@@ -1,4 +1,6 @@
-﻿using Application.State_Machine.Global_State_Machine;
+﻿using Application.State_Machine.Application_State_Machine.Models.Inventory_Models;
+using Application.State_Machine.Application_State_Machine.Models.Player_Model;
+using Application.State_Machine.Global_State_Machine;
 using Application.State_Machine.Global_State_Machine.States.Boot_State;
 using Infrastructure.Asset_Provider;
 using Infrastructure.Drag_Position_Provider;
@@ -15,6 +17,7 @@ namespace Application
     public class Bootstrapper : MonoBehaviour
     {
         private const string TimeServicePath = "Services/TimeService";
+
         public void Start()
         {
             DontDestroyOnLoad(gameObject);
@@ -24,16 +27,20 @@ namespace Application
             var gridService = new GridService();
 
             var sceneLoadingService = new SceneLoadingService();
-            
+
             var timeService = CreateTimeService(assetProvider);
-            
+
             var dragPositionProvider = new DragPositionProvider();
 
             var factoryProvider = new FactoryProvider(assetProvider);
 
             var screenMediator = new ScreenMediator(factoryProvider);
-            
+
             var popupMediator = new PopupStackMediator(screenMediator);
+
+            var playerModel = new PlayerModel();
+
+            var inventoryModel = new InventoryModel();
 
             var stateMachine = new GlobalStateMachine(
                 sceneLoadingService,
@@ -43,7 +50,9 @@ namespace Application
                 gridService,
                 dragPositionProvider,
                 timeService,
-                popupMediator
+                popupMediator,
+                playerModel,
+                inventoryModel
             );
 
             stateMachine.Enter<BootState>();
@@ -52,7 +61,7 @@ namespace Application
         private static ITimeService CreateTimeService(IAssetProvider assetProvider)
         {
             var prefab = assetProvider.Load<GameObject>(TimeServicePath);
-            
+
             return Instantiate(prefab).GetComponent<ITimeService>();
         }
     }

@@ -1,4 +1,6 @@
 using Application.State_Machine.Application_State_Machine.Abstractions.Interfaces;
+using Application.State_Machine.Application_State_Machine.Models.Inventory_Models;
+using Application.State_Machine.Application_State_Machine.Models.Player_Model;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State;
 using Application.State_Machine.Application_State_Machine.States.Main_Menu_State;
 using Core.State_Machine;
@@ -22,7 +24,9 @@ namespace Application.State_Machine.Application_State_Machine
             IDragPositionProvider dragPositionProvider,
             ITimeService timeService,
             IUIRootMediator uiRootMediator,
-            IPopupStackMediator popupStackMediator
+            IPopupStackMediator popupStackMediator,
+            IPlayerModel playerModel,
+            IInventoryModel inventoryModel
         )
         {
             var mainStateMediator = new MainMenuStateUIMediator(factoryProvider, screenStackMediator);
@@ -42,7 +46,9 @@ namespace Application.State_Machine.Application_State_Machine
             var gameplayState = new GameplayState(
                 this,
                 factoryProvider,
-                gameplayStateMediator
+                gameplayStateMediator,
+                playerModel,
+                inventoryModel
             );
 
             RegisterState(mainState);

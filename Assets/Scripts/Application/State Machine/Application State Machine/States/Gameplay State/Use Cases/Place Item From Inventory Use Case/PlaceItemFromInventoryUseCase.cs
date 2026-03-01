@@ -1,19 +1,18 @@
-using System;
 using System.Threading.Tasks;
+using Application.State_Machine.Application_State_Machine.Models.Inventory_Models;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Enums;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Grid_Model;
-using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Inventory_Models;
 using Infrastructure.Factory_Provider.Factories.Game_Factory;
 using UnityEngine;
 
-namespace Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Place_GridItem_Use_Case
+namespace Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Place_Item_From_Inventory_Use_Case
 {
-    public class PlacePlantUseCase : IPlacePlantUseCase
+    public class PlaceItemFromInventoryUseCase : IPlaceItemFromInventoryUseCase
     {
         private readonly IGridModel _gridModel;
         private readonly IGameFactory _gameFactory;
 
-        public PlacePlantUseCase(IGridModel gridModel, IGameFactory gameFactory)
+        public PlaceItemFromInventoryUseCase(IGridModel gridModel, IGameFactory gameFactory)
         {
             _gridModel = gridModel;
             _gameFactory = gameFactory;

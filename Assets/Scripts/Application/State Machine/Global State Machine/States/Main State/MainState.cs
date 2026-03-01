@@ -1,5 +1,7 @@
 ﻿using Application.State_Machine.Application_State_Machine;
 using Application.State_Machine.Application_State_Machine.Abstractions.Interfaces;
+using Application.State_Machine.Application_State_Machine.Models.Inventory_Models;
+using Application.State_Machine.Application_State_Machine.Models.Player_Model;
 using Application.State_Machine.Application_State_Machine.States.Main_Menu_State;
 using Application.State_Machine.Global_State_Machine.Abstractions;
 using Application.State_Machine.Global_State_Machine.Abstractions.Interfaces;
@@ -25,7 +27,9 @@ namespace Application.State_Machine.Global_State_Machine.States.Main_State
             IDragPositionProvider dragPositionProvider,
             ITimeService timeService,
             IUIRootMediator uiRootMediator,
-            IPopupStackMediator popupStackMediator
+            IPopupStackMediator popupStackMediator,
+            IPlayerModel playerModel,
+            IInventoryModel inventoryModel
         ) : base(stateMachine)
         {
             _applicationStateMachine = new ApplicationStateMachine(
@@ -35,7 +39,9 @@ namespace Application.State_Machine.Global_State_Machine.States.Main_State
                 dragPositionProvider,
                 timeService,
                 uiRootMediator,
-                popupStackMediator
+                popupStackMediator,
+                playerModel,
+                inventoryModel
             );
         }
 

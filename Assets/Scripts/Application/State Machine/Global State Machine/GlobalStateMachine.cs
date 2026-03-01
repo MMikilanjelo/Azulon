@@ -1,4 +1,6 @@
-﻿using Application.State_Machine.Global_State_Machine.Abstractions.Interfaces;
+﻿using Application.State_Machine.Application_State_Machine.Models.Inventory_Models;
+using Application.State_Machine.Application_State_Machine.Models.Player_Model;
+using Application.State_Machine.Global_State_Machine.Abstractions.Interfaces;
 using Application.State_Machine.Global_State_Machine.States.Boot_State;
 using Application.State_Machine.Global_State_Machine.States.Main_State;
 using Core.State_Machine;
@@ -23,7 +25,9 @@ namespace Application.State_Machine.Global_State_Machine
             IGridService gridService,
             IDragPositionProvider dragPositionProvider,
             ITimeService timeService,
-            IPopupStackMediator popupStackMediator
+            IPopupStackMediator popupStackMediator,
+            IPlayerModel playerModel,
+            IInventoryModel inventoryModel
         )
         {
             var bootState = new BootState(
@@ -41,7 +45,9 @@ namespace Application.State_Machine.Global_State_Machine
                 dragPositionProvider,
                 timeService,
                 uiRootMediator,
-                popupStackMediator
+                popupStackMediator,
+                playerModel,
+                inventoryModel
             );
 
             RegisterState(bootState);

@@ -1,34 +1,24 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.State_Machine.Application_State_Machine.Abstractions;
 using Application.State_Machine.Application_State_Machine.Abstractions.Interfaces;
-using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Enums;
-using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models;
+using Application.State_Machine.Application_State_Machine.Models.Inventory_Models;
+using Application.State_Machine.Application_State_Machine.Models.Player_Model;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Food_Model;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Grid_Model;
-using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Inventory_Models;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Selection_Model;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Deselect_Inventory_Item_Use_Case;
-using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Place_GridItem_Use_Case;
-using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Reduce_Adjacent_Plants_Turns_Use_Case;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Place_Item_From_Inventory_Use_Case;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Resolve_Grid_Use_Case;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Select_Inventory_Item_Use_Case;
 using Core.Disposables;
 using Core.Extensions;
-using Core.Reactive.Collections;
 using Core.Reactive.Collections.Interfaces;
 using Core.Reactive.Events;
-using Core.Registries;
 using Core.State_Machine.States;
-using Infrastructure.Asset_Provider;
-using Infrastructure.Drag_Position_Provider;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Factory_Provider.Factories;
 using Infrastructure.Factory_Provider.Factories.Game_Factory;
-using Infrastructure.Factory_Provider.Factories.UI_Factory.Interfaces;
-using Infrastructure.Services.Grid_Service;
-using Infrastructure.Update_Loop_Service;
 using UI.Gameplay_State_UI.Mediator.Interfaces;
-using UI.UI_Root.Mediator.Interfaces;
 using UnityEngine;
 
 namespace Application.State_Machine.Application_State_Machine.States.Gameplay_State
@@ -49,27 +39,31 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
         private readonly ISelectionModel _selectionModel;
         private readonly IInventoryModel _inventoryModel;
 
-        private CompositeDisposable _subscriptions;
+        private readonly IPlayerModel _playerModel;
 
-        private IPlacePlantUseCase _placePlantUseCase;
+        private IPlaceItemFromInventoryUseCase _placeItemFromInventoryUseCase;
         private IDeselectInventoryItemUseCase _deselectInventoryItemUseCase;
         private IResolveGridUseCase _resolveGridUseCase;
         private ISelectInventoryItemUseCase _selectItemUseCase;
 
+        private CompositeDisposable _subscriptions;
+
         public GameplayState(
             IApplicationStateMachine stateMachine,
             IFactoryProvider factoryProvider,
-            IGameplayStateUIMediator uiMediator
+            IGameplayStateUIMediator uiMediator,
+            IPlayerModel playerModel,
+            IInventoryModel inventoryModel
         ) : base(stateMachine)
         {
             _factoryProvider = factoryProvider;
             _uiMediator = uiMediator;
+            _playerModel = playerModel;
+            _inventoryModel = inventoryModel;
 
             _gridModel = new GridModel(3, 3);
             _selectionModel = new SelectionModel();
-            _inventoryModel = new InventoryModel();
         }
-
 
         public void Enter()
         {
@@ -77,8 +71,8 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
 
             _gameFactory = _factoryProvider.GetFactoryById<IGameFactory>(FactoryId.Game);
 
-            _placePlantUseCase ??= new PlacePlantUseCase(_gridModel, _gameFactory);
-            _resolveGridUseCase ??= new ResolveGridUseCase(_gridModel);
+            _placeItemFromInventoryUseCase ??= new PlaceItemFromInventoryUseCase(_gridModel, _gameFactory);
+            _resolveGridUseCase ??= new ResolveGridUseCase(_gridModel, _playerModel);
             _selectItemUseCase ??= new SelectInventoryItemUseCase(_selectionModel);
             _deselectInventoryItemUseCase ??= new DeselectInventoryItemUseCase(_selectionModel);
 
@@ -112,7 +106,7 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
 
             var selectedItem = _selectionModel.SelectedItem.Value;
 
-            if (!await _placePlantUseCase.Execute(selectedItem, cell))
+            if (!await _placeItemFromInventoryUseCase.Execute(selectedItem, cell))
             {
                 return;
             }

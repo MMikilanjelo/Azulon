@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.State_Machine.Application_State_Machine.Models.Inventory_Models;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Food_Model;
-using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Inventory_Models;
 using Core.Disposables;
 using Core.Extensions;
 using Core.Reactive;
