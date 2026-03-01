@@ -12,20 +12,16 @@ namespace UI.Abstractions
 
         public async Task Show()
         {
-            await PlayInAnimation();
-
-            OnShown();
-
             gameObject.SetActive(true);
+            OnShown();
+            await PlayInAnimation();
         }
 
         public async Task Hide()
         {
-            await PlayOutAnimation();
-
-            OnHidden();
-
             gameObject.SetActive(false);
+            OnHidden();
+            await PlayOutAnimation();
         }
 
         public virtual void Destroy()

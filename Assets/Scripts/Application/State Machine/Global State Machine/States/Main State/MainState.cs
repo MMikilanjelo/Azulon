@@ -9,6 +9,7 @@ using Application.State_Machine.Global_State_Machine.Abstractions;
 using Application.State_Machine.Global_State_Machine.Abstractions.Interfaces;
 using Core.State_Machine.States;
 using Infrastructure.Asset_Provider;
+using Infrastructure.Color_Provider;
 using Infrastructure.Drag_Position_Provider;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Services.Grid_Service;
@@ -37,7 +38,8 @@ namespace Application.State_Machine.Global_State_Machine.States.Main_State
             IPlayerModel playerModel,
             IInventoryModel inventoryModel,
             IShopModel shopModel,
-            IAssetProvider assetProvider
+            IAssetProvider assetProvider,
+            IColorProvider colorProvider
         ) : base(stateMachine)
         {
             _assetProvider = assetProvider;
@@ -56,7 +58,8 @@ namespace Application.State_Machine.Global_State_Machine.States.Main_State
                 popupStackMediator,
                 playerModel,
                 inventoryModel,
-                shopModel
+                shopModel,
+                colorProvider
             );
         }
 

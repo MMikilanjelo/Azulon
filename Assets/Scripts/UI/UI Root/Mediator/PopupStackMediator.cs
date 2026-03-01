@@ -20,7 +20,7 @@ namespace UI.UI_Root.Mediator
 
         public async Task Push<T>(Func<Transform, Task<T>> factory) where T : IPopupView
         {
-            var popup = await factory.Invoke(_uiRootMediator.UIRoot.transform);
+            var popup = await factory.Invoke(_uiRootMediator.UIRoot.OverlayContainer);
 
             _popups.Push(popup);
 

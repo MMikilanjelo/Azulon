@@ -4,6 +4,7 @@ using Application.State_Machine.Application_State_Machine.Models.Shop_Model;
 using Application.State_Machine.Global_State_Machine;
 using Application.State_Machine.Global_State_Machine.States.Boot_State;
 using Infrastructure.Asset_Provider;
+using Infrastructure.Color_Provider;
 using Infrastructure.Drag_Position_Provider;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Services;
@@ -45,6 +46,8 @@ namespace Application
 
             var shopModel = new ShopModel();
 
+            var colorProvider = new ColorProvider();
+
             var stateMachine = new GlobalStateMachine(
                 sceneLoadingService,
                 factoryProvider,
@@ -57,7 +60,8 @@ namespace Application
                 playerModel,
                 inventoryModel,
                 shopModel,
-                assetProvider
+                assetProvider,
+                colorProvider
             );
 
             stateMachine.Enter<BootState>();

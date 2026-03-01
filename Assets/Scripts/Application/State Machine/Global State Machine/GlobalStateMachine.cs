@@ -6,6 +6,7 @@ using Application.State_Machine.Global_State_Machine.States.Boot_State;
 using Application.State_Machine.Global_State_Machine.States.Main_State;
 using Core.State_Machine;
 using Infrastructure.Asset_Provider;
+using Infrastructure.Color_Provider;
 using Infrastructure.Drag_Position_Provider;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Services;
@@ -31,7 +32,8 @@ namespace Application.State_Machine.Global_State_Machine
             IPlayerModel playerModel,
             IInventoryModel inventoryModel,
             IShopModel shopModel,
-            IAssetProvider assetProvider
+            IAssetProvider assetProvider,
+            IColorProvider colorProvider
         )
         {
             var bootState = new BootState(
@@ -53,7 +55,8 @@ namespace Application.State_Machine.Global_State_Machine
                 playerModel,
                 inventoryModel,
                 shopModel,
-                assetProvider
+                assetProvider,
+                colorProvider
             );
 
             RegisterState(bootState);

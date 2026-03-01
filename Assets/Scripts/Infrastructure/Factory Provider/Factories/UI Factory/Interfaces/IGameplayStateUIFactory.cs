@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Infrastructure.Factory_Provider.Factories.Interfaces;
 using UI.Abstractions;
 using UI.Abstractions.Interfaces;
+using UI.Components;
 using UI.Gameplay_State_UI.Mediator.Interfaces;
 using UI.Gameplay_State_UI.Views;
 using UnityEngine;
@@ -17,5 +18,6 @@ namespace Infrastructure.Factory_Provider.Factories.UI_Factory.Interfaces
         Task<BoardCellView> CreateBoardCellView(Transform parent);
         Task<InventoryItemView> CreateInventoryItemView(Transform parent);
         Task<ShopItemView> CreateShopItemView(Transform parent);
+        Task<FloatingTextView> CreateFloatingTextView(Transform parent);
     }
 }

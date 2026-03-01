@@ -39,7 +39,7 @@ namespace UI.UI_Root.Mediator
                 await current.Hide();
             }
 
-            var screen = await factory.Invoke(UIRoot.transform);
+            var screen = await factory.Invoke(UIRoot.ScreenContainer);
 
             _screens.Push(screen);
 

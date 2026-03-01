@@ -224,6 +224,14 @@ PrefabInstance:
 
 '
       objectReference: {fileID: 0}
+    - target: {fileID: 1142801489031423934, guid: 88ab79814d801c3498e6f8c9496465fe, type: 3}
+      propertyPath: m_fontSize
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1142801489031423934, guid: 88ab79814d801c3498e6f8c9496465fe, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 3441582429517369373, guid: 88ab79814d801c3498e6f8c9496465fe, type: 3}
       propertyPath: m_Pivot.x
       value: 1
@@ -250,11 +258,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3441582429517369373, guid: 88ab79814d801c3498e6f8c9496465fe, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 80
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3441582429517369373, guid: 88ab79814d801c3498e6f8c9496465fe, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 40
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3441582429517369373, guid: 88ab79814d801c3498e6f8c9496465fe, type: 3}
       propertyPath: m_LocalPosition.x
@@ -335,7 +343,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5512533848122902119, guid: 88ab79814d801c3498e6f8c9496465fe, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7029329661638418430}
   m_SourcePrefab: {fileID: 100100000, guid: 88ab79814d801c3498e6f8c9496465fe, type: 3}
 --- !u!224 &3099365685119895719 stripped
 RectTransform:
@@ -347,12 +358,31 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3999690849600548764, guid: 88ab79814d801c3498e6f8c9496465fe, type: 3}
   m_PrefabInstance: {fileID: 342797313447598266}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 5206627375721111261}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b116bbc3654848fb8ad04277d048023d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI.Components.CustomButton
+--- !u!1 &5206627375721111261 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5512533848122902119, guid: 88ab79814d801c3498e6f8c9496465fe, type: 3}
+  m_PrefabInstance: {fileID: 342797313447598266}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7029329661638418430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5206627375721111261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
+  m_HorizontalFit: 2
+  m_VerticalFit: 2
 --- !u!1001 &1213462102448782036
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -367,11 +397,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1142801489031423934, guid: 88ab79814d801c3498e6f8c9496465fe, type: 3}
       propertyPath: m_fontSize
-      value: 24
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 1142801489031423934, guid: 88ab79814d801c3498e6f8c9496465fe, type: 3}
       propertyPath: m_fontSizeBase
-      value: 24
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 3441582429517369373, guid: 88ab79814d801c3498e6f8c9496465fe, type: 3}
       propertyPath: m_Pivot.x
@@ -554,11 +584,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1142801489031423934, guid: 88ab79814d801c3498e6f8c9496465fe, type: 3}
       propertyPath: m_fontSize
-      value: 24
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 1142801489031423934, guid: 88ab79814d801c3498e6f8c9496465fe, type: 3}
       propertyPath: m_fontSizeBase
-      value: 24
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 3441582429517369373, guid: 88ab79814d801c3498e6f8c9496465fe, type: 3}
       propertyPath: m_Pivot.x

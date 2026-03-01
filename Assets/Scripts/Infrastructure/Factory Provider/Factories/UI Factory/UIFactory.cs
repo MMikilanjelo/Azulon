@@ -3,6 +3,7 @@ using Infrastructure.Asset_Provider;
 using Infrastructure.Factory_Provider.Factories.UI_Factory.Interfaces;
 using UI.Abstractions;
 using UI.Abstractions.Interfaces;
+using UI.Components;
 using UI.Gameplay_State_UI.Mediator.Interfaces;
 using UI.Gameplay_State_UI.Views;
 using UI.Main_Menu_State_UI.Mediator.Interfaces;
@@ -101,6 +102,15 @@ namespace Infrastructure.Factory_Provider.Factories.UI_Factory
             var view = Object.Instantiate(prefab, parent).GetComponent<ShopItemView>();
 
             view.Construct();
+
+            return view;
+        }
+
+        public async Task<FloatingTextView> CreateFloatingTextView(Transform parent)
+        {
+            var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.FloatingTextView);
+
+            var view = Object.Instantiate(prefab, parent).GetComponent<FloatingTextView>();
 
             return view;
         }

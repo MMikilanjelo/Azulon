@@ -10,9 +10,10 @@ namespace Infrastructure.Asset_Provider
         public const string BoardCellView = "UI/GameplayState/BoardCellView";
         public const string BoardView = "UI/GameplayState/BoardView";
         public const string ShopItemView = "UI/GameplayState/ShopItemView";
+        public const string FloatingTextView = "UI/Components/FloatingTextView";
 
         public const string UIRootViewPath = "UI/UIRootView";
-        
+
         public const string ShopCatalogDefinition = "Definitions/Shop/CatalogDefinition";
     }
 }

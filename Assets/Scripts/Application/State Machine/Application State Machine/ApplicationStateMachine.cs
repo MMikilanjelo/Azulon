@@ -5,6 +5,7 @@ using Application.State_Machine.Application_State_Machine.Models.Shop_Model;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State;
 using Application.State_Machine.Application_State_Machine.States.Main_Menu_State;
 using Core.State_Machine;
+using Infrastructure.Color_Provider;
 using Infrastructure.Drag_Position_Provider;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Services.Grid_Service;
@@ -28,7 +29,8 @@ namespace Application.State_Machine.Application_State_Machine
             IPopupStackMediator popupStackMediator,
             IPlayerModel playerModel,
             IInventoryModel inventoryModel,
-            IShopModel shopModel
+            IShopModel shopModel,
+            IColorProvider colorProvider
         )
         {
             var mainStateMediator = new MainMenuStateUIMediator(factoryProvider, screenStackMediator);
@@ -42,7 +44,8 @@ namespace Application.State_Machine.Application_State_Machine
                 factoryProvider,
                 screenStackMediator,
                 uiRootMediator,
-                popupStackMediator
+                popupStackMediator,
+                colorProvider
             );
 
             var gameplayState = new GameplayState(

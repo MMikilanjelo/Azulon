@@ -10,6 +10,7 @@ using Core.Extensions;
 using Core.Reactive;
 using Core.Reactive.Events;
 using Core.Reactive.Interfaces;
+using Infrastructure.Color_Provider;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Factory_Provider.Factories;
 using Infrastructure.Factory_Provider.Factories.UI_Factory.Interfaces;
@@ -41,6 +42,7 @@ namespace UI.Gameplay_State_UI.Mediator
         private readonly IScreenStackMediator _screenStackMediator;
         private readonly IUIRootMediator _uiRootMediator;
         private readonly IPopupStackMediator _popupStackMediator;
+        private readonly IColorProvider _colorProvider;
 
         private BoardView _boardView;
 
@@ -60,13 +62,15 @@ namespace UI.Gameplay_State_UI.Mediator
             IFactoryProvider factoryProvider,
             IScreenStackMediator screenStackMediator,
             IUIRootMediator uiRootMediator,
-            IPopupStackMediator popupStackMediator
+            IPopupStackMediator popupStackMediator,
+            IColorProvider colorProvider
         )
         {
             _factoryProvider = factoryProvider;
             _screenStackMediator = screenStackMediator;
             _uiRootMediator = uiRootMediator;
             _popupStackMediator = popupStackMediator;
+            _colorProvider = colorProvider;
         }
 
         public void Initialize(GameplayState gameplayState)
@@ -81,6 +85,8 @@ namespace UI.Gameplay_State_UI.Mediator
             _state.GridItems.Added.Subscribe(OnGridItemAdded).AddTo(_subscriptions);
             _state.GridItems.Removed.Subscribe(OnGridItemRemoved).AddTo(_subscriptions);
             _state.PlayerGold.Subscribe(OnPlayerGoldChanged).AddTo(_subscriptions);
+            _state.PurchaseSucceed.Subscribe(price => OnPurchaseSucceed(price).Forget()).AddTo(_subscriptions);
+            _state.PurchaseFailed.Subscribe(_ => OnPurchaseFailed().Forget()).AddTo(_subscriptions);
         }
 
         public void Dispose()
@@ -131,7 +137,7 @@ namespace UI.Gameplay_State_UI.Mediator
 
                 view.Setup(item.Icon, item.Title, item.Description, item.Price);
 
-                view.PurchaseButtonClicked.Subscribe(OnShopItemClicked);
+                view.PurchaseButtonClicked.Subscribe(OnPurchaseButtonClicked);
 
                 _shopViews[view] = item;
             }
@@ -180,9 +186,8 @@ namespace UI.Gameplay_State_UI.Mediator
         private void OnInventoryItemClicked(InventoryItemView view) =>
             _inventoryItemClicked.Invoke(_inventoryViews[view]);
 
-        private void OnShopItemClicked(ShopItemView view) =>
+        private void OnPurchaseButtonClicked(ShopItemView view) =>
             _shopItemClicked.Invoke(_shopViews[view]);
-
 
         private void OnInventoryItemRemoved(InventoryItemModel model)
         {
@@ -209,17 +214,24 @@ namespace UI.Gameplay_State_UI.Mediator
         {
             var kvp = _boardViews.FirstOrDefault(v => v.Value == model.GridPosition.Value);
 
-            if (kvp.Key is null)
-            {
-                return;
-            }
-
-            _boardViews.Remove(kvp.Key);
-
-            kvp.Key.Destroy();
+            kvp.Key?.HideAssignedItemImage();
         }
 
         private void OnPlayerGoldChanged(int gold) =>
             _playerGoldChanged.Invoke(gold);
+
+        private async Task OnPurchaseFailed()
+        {
+            var textView = await _factory.CreateFloatingTextView(_uiRootMediator.UIRoot.OverlayContainer);
+
+            textView.Play("Not Enough Coins", _colorProvider.PurchaseFailed).Forget();
+        }
+
+        private async Task OnPurchaseSucceed(int price)
+        {
+            var textView = await _factory.CreateFloatingTextView(_uiRootMediator.UIRoot.OverlayContainer);
+
+            textView.Play($"-{price}", _colorProvider.PurchaseFailed).Forget();
+        }
     }
 }

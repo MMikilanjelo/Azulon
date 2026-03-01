@@ -13,6 +13,7 @@ using Application.State_Machine.Application_State_Machine.States.Gameplay_State.
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Select_Inventory_Item_Use_Case;
 using Core.Disposables;
 using Core.Extensions;
+using Core.Reactive;
 using Core.Reactive.Collections.Interfaces;
 using Core.Reactive.Events;
 using Core.Reactive.Interfaces;
@@ -33,6 +34,8 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
         public IReadOnlyReactiveList<ShopItemModel> ShopItems => _shopModel.Items;
         public IReadOnlyReactiveHashSet<FoodModel> GridItems => _gridModel.Items;
         public IReadOnlyReactiveProperty<int> PlayerGold => _playerModel.Gold;
+        public IReadOnlyReactiveEvent<int> PurchaseSucceed => _purchaseSucceed;
+        public IReadOnlyReactiveEvent<EmptyEvent> PurchaseFailed => _purchaseFailed;
 
         private readonly IFactoryProvider _factoryProvider;
         private readonly IGameplayStateUIMediator _uiMediator;
@@ -50,6 +53,9 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
         private IDeselectInventoryItemUseCase _deselectInventoryItemUseCase;
         private IResolveGridUseCase _resolveGridUseCase;
         private ISelectInventoryItemUseCase _selectItemUseCase;
+
+        private readonly ReactiveEvent<int> _purchaseSucceed = new();
+        private readonly ReactiveEvent<EmptyEvent> _purchaseFailed = new();
 
         private CompositeDisposable _subscriptions;
 
@@ -92,11 +98,12 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
             _uiMediator.FillBoard(_gridModel.GetAllPositions()).Forget();
         }
 
-
         public void Exit()
         {
             _subscriptions.Dispose();
             _uiMediator.Dispose();
+            _purchaseSucceed.Dispose();
+            _purchaseFailed.Dispose();
         }
 
         private void OnFinishTurnClicked(EmptyEvent _) =>
@@ -127,6 +134,7 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
 
             if (!isPurchaseSucceed)
             {
+                _purchaseFailed.Invoke(EmptyEvent.Default);
                 return;
             }
 
@@ -137,6 +145,8 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
             );
 
             _inventoryModel.Add(inventoryModel);
+
+            _purchaseSucceed.Invoke(itemToPurchaseModel.Price);
         }
 
         private void OnInventoryItemSelected(InventoryItemModel item) =>
