@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Infrastructure.Asset_Provider;
 using Infrastructure.Factory_Provider.Factories.UI_Factory.Interfaces;
 using UI.Abstractions;
+using UI.Abstractions.Interfaces;
 using UI.Gameplay_State_UI.Mediator.Interfaces;
 using UI.Gameplay_State_UI.Views;
 using UI.Main_Menu_State_UI.Mediator.Interfaces;
@@ -44,7 +45,7 @@ namespace Infrastructure.Factory_Provider.Factories.UI_Factory
             return view;
         }
 
-        public async Task<IScreenView> CreateShopPopup(Transform parent, IShopPopupMediator mediator)
+        public async Task<IPopupView> CreateShopPopup(Transform parent, IShopPopupMediator mediator)
         {
             var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.ShopPopupView);
 
@@ -55,7 +56,7 @@ namespace Infrastructure.Factory_Provider.Factories.UI_Factory
             return view;
         }
 
-        public async Task<IScreenView> CreateInventoryPopup(Transform parent, IInventoryPopupMediator mediator)
+        public async Task<IPopupView> CreateInventoryPopup(Transform parent, IInventoryPopupMediator mediator)
         {
             var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.InventoryPopupView);
 
@@ -66,15 +67,31 @@ namespace Infrastructure.Factory_Provider.Factories.UI_Factory
             return view;
         }
 
-        // public async Task<InventoryItemView> CreateInventoryItemView(Transform parent, IInventoryItemViewModel viewModel)
-        // {
-        //     var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.InventoryItemView);
-        //
-        //     var view = Object.Instantiate(prefab, parent).GetComponent<InventoryItemView>();
-        //
-        //     view.Bind(viewModel);
-        //
-        //     return view;
-        // }
+        public async Task<BoardView> CreateBoardView(Transform parent)
+        {
+            var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.BoardView);
+
+            var view = Object.Instantiate(prefab, parent).GetComponent<BoardView>();
+
+            return view;
+        }
+
+        public async Task<BoardCellView> CreateBoardCellView(Transform parent)
+        {
+            var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.BoardCellView);
+
+            var view = Object.Instantiate(prefab, parent).GetComponent<BoardCellView>();
+
+            return view;
+        }
+
+        public async Task<InventoryItemView> CreateInventoryItemView(Transform parent)
+        {
+            var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.InventoryItemView);
+
+            var view = Object.Instantiate(prefab, parent).GetComponent<InventoryItemView>();
+
+            return view;
+        }
     }
 }

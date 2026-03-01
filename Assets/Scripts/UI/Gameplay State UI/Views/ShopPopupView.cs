@@ -10,7 +10,7 @@ using UnityEngine.Serialization;
 
 namespace UI.Gameplay_State_UI.Views
 {
-    public class ShopPopupView : ScreenViewBase
+    public class ShopPopupView : PopupViewBase
     {
         [SerializeField] private SlideAnimationComponent _slideAnimationComponent;
 
@@ -43,14 +43,14 @@ namespace UI.Gameplay_State_UI.Views
         private void OnDimmerClicked(EmptyEvent _) =>
             _mediator.OnShopPopUpDimmerClicked();
 
-        protected override Task PlayShowAnimation()
+        protected override Task PlayInAnimation()
         {
             _dimmerComponent.Show(0.3f);
 
             return _slideAnimationComponent.PlayIn(new Vector2(0, -Screen.height), Vector2.zero);
         }
 
-        protected override Task PlayHideAnimation()
+        protected override Task PlayOutAnimation()
         {
             _dimmerComponent.Hide(0.3f);
 

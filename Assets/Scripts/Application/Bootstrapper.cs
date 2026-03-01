@@ -32,6 +32,8 @@ namespace Application
             var factoryProvider = new FactoryProvider(assetProvider);
 
             var screenMediator = new ScreenMediator(factoryProvider);
+            
+            var popupMediator = new PopupStackMediator(screenMediator);
 
             var stateMachine = new GlobalStateMachine(
                 sceneLoadingService,
@@ -40,7 +42,8 @@ namespace Application
                 screenMediator,
                 gridService,
                 dragPositionProvider,
-                timeService
+                timeService,
+                popupMediator
             );
 
             stateMachine.Enter<BootState>();

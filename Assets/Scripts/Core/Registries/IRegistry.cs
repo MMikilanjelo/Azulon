@@ -8,5 +8,6 @@ namespace Core.Registries
         bool TryAdd(T item);
         bool Remove(T item);
         TResult Query<TResult>(Registry<T>.Selector<TResult> selector);
+        void Clear();
     }
 }

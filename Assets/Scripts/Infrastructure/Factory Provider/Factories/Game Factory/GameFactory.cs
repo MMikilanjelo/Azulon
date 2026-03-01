@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Features.Plant;
-using Features.Plant.Definitions;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Definitions;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Enums;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Food_Model;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Food_Model.Strategy;
 using Infrastructure.Asset_Provider;
 using UnityEngine;
 
@@ -16,53 +19,21 @@ namespace Infrastructure.Factory_Provider.Factories.Game_Factory
             _assetProvider = assetProvider;
         }
 
-        public async Task<PlantView> CreatePlant(Transform parent, Vector3 position)
+        public async Task<FoodModel> CreateFood(FoodId id, Vector2Int gridPosition)
         {
-            var definition = await _assetProvider.LoadAsync<GridItemDefinition>(AssetAddress.AppleDefinition);
+            var definition = await _assetProvider.LoadAsync<FoodDefinition>(GetDefinitionPath(id));
 
-            var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.Plant);
-
-            var view = Object.Instantiate(prefab, position, Quaternion.identity).GetComponent<PlantView>();
-
-            view.transform.SetParent(parent, false);
-
-            var blockViews = new List<GridBlockView>();
-
-            var centerOffset = new Vector3(0.5f, 0.5f, 0f);
-
-            foreach (var shape in definition.ShapeOffsets)
+            IFoodResolutionStrategy strategy = definition.Strategy switch
             {
-                blockViews.Add(await CreateGridBlockView(
-                    view.transform,
-                    centerOffset,
-                    shape,
-                    definition.Color
-                ));
-            }
+                FoodStrategyType.AdjacencyMultiplier => new AdjacencyMultiplierStrategy(definition.BaseValue, definition.Rules),
+                FoodStrategyType.LoneWolf => new LoneWolfStrategy(definition.BaseValue),
+                _ => new AdjacencyMultiplierStrategy(definition.BaseValue, definition.Rules),
+            };
 
-            var model = new PlantModel(definition, Vector2Int.zero, position);
-
-            view.Construct(blockViews, model);
-
-            return view;
+            return new FoodModel(definition, strategy, gridPosition);
         }
 
-        private async Task<GridBlockView> CreateGridBlockView(
-            Transform parent,
-            Vector3 centerOffset,
-            Vector2Int position,
-            Color color
-        )
-        {
-            var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.GridBlockView);
-
-            var view = Object.Instantiate(prefab, parent).GetComponent<GridBlockView>();
-
-            view.transform.localPosition = new Vector3(position.x, position.y, 0f) + centerOffset;
-
-            view.SetColor(color);
-
-            return view;
-        }
+        private string GetDefinitionPath(FoodId id) =>
+            $"Definitions/Foods/{id.ToString()}Definition";
     }
 }

@@ -1,38 +1,38 @@
-using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models;
-using Features.Plant;
-using Infrastructure.Services.Grid_Service;
+using System;
+using System.Threading.Tasks;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Enums;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Grid_Model;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Inventory_Models;
+using Infrastructure.Factory_Provider.Factories.Game_Factory;
+using UnityEngine;
 
 namespace Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Place_GridItem_Use_Case
 {
     public class PlacePlantUseCase : IPlacePlantUseCase
     {
         private readonly IGridModel _gridModel;
-        
-        private readonly IGridService _gridService;
+        private readonly IGameFactory _gameFactory;
 
-        public PlacePlantUseCase(IGridModel gridModel, IGridService gridService)
+        public PlacePlantUseCase(IGridModel gridModel, IGameFactory gameFactory)
         {
             _gridModel = gridModel;
-
-            _gridService = gridService;
+            _gameFactory = gameFactory;
         }
 
-        public bool Execute(PlantModel item)
+        public async Task<bool> Execute(InventoryItemModel selectedItem, Vector2Int pos)
         {
-            var gridPos = _gridService.WorldToGrid(item.WorldPosition.Value);
-
-            if (!_gridModel.CanPlaceItem(item, gridPos))
+            if (!_gridModel.IsCellEmpty(pos) || !_gridModel.IsInBounds(pos))
             {
-                var previousWorldPosition = _gridService.GridToWorld(item.GridPosition.Value);
-
-                item.UpdateWorldPosition(previousWorldPosition);
-
                 return false;
             }
 
-            var worldPosition = _gridService.GridToWorld(gridPos);
+            // var foodId = Enum.Parse<FoodId>(selectedItem.ItemId);
 
-            item.SnapToGrid(gridPos, worldPosition);
+            var plant = await _gameFactory.CreateFood(FoodId.Honey, pos);
+
+            plant.SetGridPosition(pos);
+
+            _gridModel.RegisterItem(plant);
 
             return true;
         }

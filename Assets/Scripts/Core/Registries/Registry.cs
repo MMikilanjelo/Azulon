@@ -20,5 +20,8 @@ namespace Core.Registries
 
         public TResult Query<TResult>(Selector<TResult> selector) =>
             selector.Invoke(_items);
+        
+        public void Clear() =>
+            _items.Clear();
     }
 }

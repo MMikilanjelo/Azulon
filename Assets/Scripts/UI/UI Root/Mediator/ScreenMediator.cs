@@ -5,6 +5,7 @@ using Infrastructure.Factory_Provider;
 using Infrastructure.Factory_Provider.Factories;
 using Infrastructure.Factory_Provider.Factories.UI_Root_Factory;
 using UI.Abstractions;
+using UI.Abstractions.Interfaces;
 using UI.UI_Root.Mediator.Interfaces;
 using UI.UI_Root.View;
 using UnityEngine;
@@ -13,11 +14,9 @@ namespace UI.UI_Root.Mediator
 {
     public class ScreenMediator : IScreenStackMediator, IUIRootMediator
     {
-        public Transform UIRoot => _uiRootView.transform;
+        public UIRootView UIRoot { get; private set; }
 
         private readonly IFactoryProvider _factoryProvider;
-
-        private UIRootView _uiRootView;
 
         private readonly Stack<IScreenView> _screens = new();
 
@@ -30,7 +29,7 @@ namespace UI.UI_Root.Mediator
         {
             var factory = _factoryProvider.GetFactoryById<IUIRootFactory>(FactoryId.UIRoot);
 
-            _uiRootView = await factory.CreateUIRoot();
+            UIRoot = await factory.CreateUIRoot();
         }
 
         public async Task Push<T>(Func<Transform, Task<T>> factory) where T : IScreenView
@@ -40,7 +39,7 @@ namespace UI.UI_Root.Mediator
                 await current.Hide();
             }
 
-            var screen = await factory.Invoke(_uiRootView.transform);
+            var screen = await factory.Invoke(UIRoot.transform);
 
             _screens.Push(screen);
 

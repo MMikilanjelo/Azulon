@@ -2,5 +2,6 @@
 {
     public readonly struct EmptyEvent
     {
+        public static readonly EmptyEvent Default = new();
     }
 }

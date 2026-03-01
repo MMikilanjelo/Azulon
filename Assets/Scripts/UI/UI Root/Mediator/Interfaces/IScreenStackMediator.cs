@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using UI.Abstractions;
+using UI.Abstractions.Interfaces;
 using UnityEngine;
 
 namespace UI.UI_Root.Mediator.Interfaces

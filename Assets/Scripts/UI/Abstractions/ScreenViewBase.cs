@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using UI.Abstractions.Interfaces;
 using UnityEngine;
 
 namespace UI.Abstractions
@@ -11,7 +12,7 @@ namespace UI.Abstractions
 
         public async Task Show()
         {
-            await PlayShowAnimation();
+            await PlayInAnimation();
 
             OnShown();
 
@@ -20,7 +21,7 @@ namespace UI.Abstractions
 
         public async Task Hide()
         {
-            await PlayHideAnimation();
+            await PlayOutAnimation();
 
             OnHidden();
 
@@ -36,7 +37,7 @@ namespace UI.Abstractions
         protected abstract void OnHidden();
         protected abstract void OnShown();
         protected abstract void OnDestroyed();
-        protected virtual Task PlayShowAnimation() => Task.CompletedTask;
-        protected virtual Task PlayHideAnimation() => Task.CompletedTask;
+        protected virtual Task PlayInAnimation() => Task.CompletedTask;
+        protected virtual Task PlayOutAnimation() => Task.CompletedTask;
     }
 }

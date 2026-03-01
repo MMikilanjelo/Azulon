@@ -387,7 +387,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fac8e7d924943438b192e464371d9d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI.Gameplay_State_UI.Shop_Popup_View.View.ShopPopupView
-  _slideFromBottomAnimationComponent: {fileID: 1579309934723245025}
+  _slideAnimationComponent: {fileID: 1579309934723245025}
   _dimmerComponent: {fileID: 2012972169445060935}
 --- !u!1 &8841641701623737958
 GameObject:

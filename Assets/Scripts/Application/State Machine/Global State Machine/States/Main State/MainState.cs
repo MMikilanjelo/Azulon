@@ -23,7 +23,9 @@ namespace Application.State_Machine.Global_State_Machine.States.Main_State
             IScreenStackMediator screenStackMediator,
             IGridService gridService,
             IDragPositionProvider dragPositionProvider,
-            ITimeService timeService
+            ITimeService timeService,
+            IUIRootMediator uiRootMediator,
+            IPopupStackMediator popupStackMediator
         ) : base(stateMachine)
         {
             _applicationStateMachine = new ApplicationStateMachine(
@@ -31,7 +33,9 @@ namespace Application.State_Machine.Global_State_Machine.States.Main_State
                 screenStackMediator,
                 gridService,
                 dragPositionProvider,
-                timeService
+                timeService,
+                uiRootMediator,
+                popupStackMediator
             );
         }
 

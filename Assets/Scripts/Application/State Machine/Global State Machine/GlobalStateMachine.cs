@@ -22,7 +22,8 @@ namespace Application.State_Machine.Global_State_Machine
             IUIRootMediator uiRootMediator,
             IGridService gridService,
             IDragPositionProvider dragPositionProvider,
-            ITimeService timeService
+            ITimeService timeService,
+            IPopupStackMediator popupStackMediator
         )
         {
             var bootState = new BootState(
@@ -38,7 +39,9 @@ namespace Application.State_Machine.Global_State_Machine
                 screenStackMediator,
                 gridService,
                 dragPositionProvider,
-                timeService
+                timeService,
+                uiRootMediator,
+                popupStackMediator
             );
 
             RegisterState(bootState);

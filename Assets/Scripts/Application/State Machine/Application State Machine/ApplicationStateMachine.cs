@@ -20,7 +20,9 @@ namespace Application.State_Machine.Application_State_Machine
             IScreenStackMediator screenStackMediator,
             IGridService gridService,
             IDragPositionProvider dragPositionProvider,
-            ITimeService timeService
+            ITimeService timeService,
+            IUIRootMediator uiRootMediator,
+            IPopupStackMediator popupStackMediator
         )
         {
             var mainStateMediator = new MainMenuStateUIMediator(factoryProvider, screenStackMediator);
@@ -30,14 +32,16 @@ namespace Application.State_Machine.Application_State_Machine
                 mainStateMediator
             );
 
-            var gameplayStateMediator = new GameplayStateUIMediator(factoryProvider, screenStackMediator);
+            var gameplayStateMediator = new GameplayStateUIMediator(
+                factoryProvider,
+                screenStackMediator,
+                uiRootMediator,
+                popupStackMediator
+            );
 
             var gameplayState = new GameplayState(
                 this,
                 factoryProvider,
-                gridService,
-                dragPositionProvider,
-                timeService,
                 gameplayStateMediator
             );
 

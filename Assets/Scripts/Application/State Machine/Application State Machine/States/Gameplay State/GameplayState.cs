@@ -1,16 +1,25 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Application.State_Machine.Application_State_Machine.Abstractions;
 using Application.State_Machine.Application_State_Machine.Abstractions.Interfaces;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Enums;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models;
-using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Drag_Grid_Item_Use_Case;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Food_Model;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Grid_Model;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Inventory_Models;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Selection_Model;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Deselect_Inventory_Item_Use_Case;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Place_GridItem_Use_Case;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Reduce_Adjacent_Plants_Turns_Use_Case;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Select_Inventory_Item_Use_Case;
 using Core.Disposables;
 using Core.Extensions;
+using Core.Reactive.Collections;
 using Core.Reactive.Collections.Interfaces;
+using Core.Reactive.Events;
 using Core.Registries;
 using Core.State_Machine.States;
-using Features.Inventory;
-using Features.Plant;
+using Infrastructure.Asset_Provider;
 using Infrastructure.Drag_Position_Provider;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Factory_Provider.Factories;
@@ -28,66 +37,57 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
         IEnterState,
         IExitState
     {
-        public IReadOnlyReactiveHashSet<InventoryItemModel> InventoryItems => _inventory.Items;
+        public IReadOnlyReactiveList<InventoryItemModel> InventoryItems => _inventoryModel.Items;
+        public IReadOnlyReactiveHashSet<FoodModel> GridItems => _gridModel.Items;
 
         private readonly IFactoryProvider _factoryProvider;
-        private readonly ITimeService _timeService;
         private readonly IGameplayStateUIMediator _uiMediator;
 
         private IGameFactory _gameFactory;
 
         private readonly IGridModel _gridModel;
+        private readonly ISelectionModel _selectionModel;
+        private readonly IInventoryModel _inventoryModel;
 
         private CompositeDisposable _subscriptions;
 
-        private readonly IDragGridItemUseCase _dragGridItemUseCase;
-        private readonly IPlacePlantUseCase _placePlantUseCase;
-        private readonly IReduceAdjacentPlantsTurnsUseCase _reduceAdjacentPlantsTurnsUseCase;
-        private readonly Registry<InventoryItemModel> _inventory = new();
+        private IPlacePlantUseCase _placePlantUseCase;
+        private IDeselectInventoryItemUseCase _deselectInventoryItemUseCase;
+        private IResolveGridUseCase _resolveGridUseCase;
+        private ISelectInventoryItemUseCase _selectItemUseCase;
 
         public GameplayState(
             IApplicationStateMachine stateMachine,
             IFactoryProvider factoryProvider,
-            IGridService gridService,
-            IDragPositionProvider dragPositionProvider,
-            ITimeService timeService,
             IGameplayStateUIMediator uiMediator
         ) : base(stateMachine)
         {
             _factoryProvider = factoryProvider;
-            _timeService = timeService;
             _uiMediator = uiMediator;
 
-            _gridModel = new GridModel(320, 320);
-
-            _dragGridItemUseCase = new DragGridItemUseCase(dragPositionProvider);
-
-            _placePlantUseCase = new PlacePlantUseCase(_gridModel, gridService);
-
-            _reduceAdjacentPlantsTurnsUseCase = new ReduceAdjacentPlantsTurnsUseCase(_gridModel);
+            _gridModel = new GridModel(3, 3);
+            _selectionModel = new SelectionModel();
+            _inventoryModel = new InventoryModel();
         }
 
-        public async void Enter()
+
+        public void Enter()
         {
             _subscriptions = new CompositeDisposable();
 
             _gameFactory = _factoryProvider.GetFactoryById<IGameFactory>(FactoryId.Game);
 
+            _placePlantUseCase ??= new PlacePlantUseCase(_gridModel, _gameFactory);
+            _resolveGridUseCase ??= new ResolveGridUseCase(_gridModel);
+            _selectItemUseCase ??= new SelectInventoryItemUseCase(_selectionModel);
+            _deselectInventoryItemUseCase ??= new DeselectInventoryItemUseCase(_selectionModel);
+
+            _uiMediator.InventoryItemClicked.Subscribe(OnInventoryItemSelected).AddTo(_subscriptions);
+            _uiMediator.BoardCellClicked.Subscribe(cell => OnBoardCellClicked(cell).Forget()).AddTo(_subscriptions);
+            _uiMediator.FinishTurnClicked.Subscribe(OnFinishTurnClicked).AddTo(_subscriptions);
             _uiMediator.Initialize(this);
-
             _uiMediator.CreateGameplayScreen().Forget();
-
-            // var gridItem = await _gameFactory.CreatePlant(null, Vector3.zero);
-            // gridItem.DragEnded.Subscribe(OnItemDragEnded).AddTo(_subscriptions);
-            // gridItem.DragStarted.Subscribe(OnItemGridStarted).AddTo(_subscriptions);
-            //
-            // var gridItem2 = await _gameFactory.CreatePlant(null, Vector3.zero * 4);
-            // gridItem2.DragEnded.Subscribe(OnItemDragEnded).AddTo(_subscriptions);
-            // gridItem2.DragStarted.Subscribe(OnItemGridStarted).AddTo(_subscriptions);
-            //
-            // _gridModel.RegisterItem(gridItem.Model);
-            // _gridModel.RegisterItem(gridItem2.Model);
-            // _timeService.UpdateTicked.Subscribe(OnUpdateTicked).AddTo(_subscriptions);
+            _uiMediator.FillBoard(_gridModel.GetAllPositions()).Forget();
         }
 
         public void Exit()
@@ -96,17 +96,35 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
             _uiMediator.Dispose();
         }
 
-        private void OnItemDragEnded(PlantModel item)
+        private void OnFinishTurnClicked(EmptyEvent _)
         {
-            _dragGridItemUseCase.StopDrag();
+            var result = _resolveGridUseCase.Execute();
 
-            _placePlantUseCase.Execute(item);
+            Debug.Log(result.TotalGold);
         }
 
-        private void OnItemGridStarted(PlantModel view) =>
-            _dragGridItemUseCase.StartDrag(view);
+        private async Task OnBoardCellClicked(Vector2Int cell)
+        {
+            if (!_selectionModel.HasSelection)
+            {
+                return;
+            }
 
-        private void OnUpdateTicked(float deltaTime) =>
-            _dragGridItemUseCase.UpdateItemPosition(deltaTime);
+            var selectedItem = _selectionModel.SelectedItem.Value;
+
+            if (!await _placePlantUseCase.Execute(selectedItem, cell))
+            {
+                return;
+            }
+
+            _inventoryModel.Remove(selectedItem);
+
+            _deselectInventoryItemUseCase.Execute();
+        }
+
+        private void OnInventoryItemSelected(InventoryItemModel item)
+        {
+            _selectItemUseCase.Execute(item);
+        }
     }
 }
