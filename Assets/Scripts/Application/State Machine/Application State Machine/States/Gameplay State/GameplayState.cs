@@ -3,6 +3,7 @@ using Application.State_Machine.Application_State_Machine.Abstractions;
 using Application.State_Machine.Application_State_Machine.Abstractions.Interfaces;
 using Application.State_Machine.Application_State_Machine.Models.Inventory_Models;
 using Application.State_Machine.Application_State_Machine.Models.Player_Model;
+using Application.State_Machine.Application_State_Machine.Models.Shop_Model;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Food_Model;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Grid_Model;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Selection_Model;
@@ -14,6 +15,7 @@ using Core.Disposables;
 using Core.Extensions;
 using Core.Reactive.Collections.Interfaces;
 using Core.Reactive.Events;
+using Core.Reactive.Interfaces;
 using Core.State_Machine.States;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Factory_Provider.Factories;
@@ -28,7 +30,9 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
         IExitState
     {
         public IReadOnlyReactiveList<InventoryItemModel> InventoryItems => _inventoryModel.Items;
+        public IReadOnlyReactiveList<ShopItemModel> ShopItems => _shopModel.Items;
         public IReadOnlyReactiveHashSet<FoodModel> GridItems => _gridModel.Items;
+        public IReadOnlyReactiveProperty<int> PlayerGold => _playerModel.Gold;
 
         private readonly IFactoryProvider _factoryProvider;
         private readonly IGameplayStateUIMediator _uiMediator;
@@ -40,6 +44,7 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
         private readonly IInventoryModel _inventoryModel;
 
         private readonly IPlayerModel _playerModel;
+        private readonly IShopModel _shopModel;
 
         private IPlaceItemFromInventoryUseCase _placeItemFromInventoryUseCase;
         private IDeselectInventoryItemUseCase _deselectInventoryItemUseCase;
@@ -53,13 +58,15 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
             IFactoryProvider factoryProvider,
             IGameplayStateUIMediator uiMediator,
             IPlayerModel playerModel,
-            IInventoryModel inventoryModel
+            IInventoryModel inventoryModel,
+            IShopModel shopModel
         ) : base(stateMachine)
         {
             _factoryProvider = factoryProvider;
             _uiMediator = uiMediator;
             _playerModel = playerModel;
             _inventoryModel = inventoryModel;
+            _shopModel = shopModel;
 
             _gridModel = new GridModel(3, 3);
             _selectionModel = new SelectionModel();
@@ -84,18 +91,15 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
             _uiMediator.FillBoard(_gridModel.GetAllPositions()).Forget();
         }
 
+
         public void Exit()
         {
             _subscriptions.Dispose();
             _uiMediator.Dispose();
         }
 
-        private void OnFinishTurnClicked(EmptyEvent _)
-        {
-            var result = _resolveGridUseCase.Execute();
-
-            Debug.Log(result.TotalGold);
-        }
+        private void OnFinishTurnClicked(EmptyEvent _) =>
+            _resolveGridUseCase.Execute();
 
         private async Task OnBoardCellClicked(Vector2Int cell)
         {
@@ -116,9 +120,7 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
             _deselectInventoryItemUseCase.Execute();
         }
 
-        private void OnInventoryItemSelected(InventoryItemModel item)
-        {
+        private void OnInventoryItemSelected(InventoryItemModel item) =>
             _selectItemUseCase.Execute(item);
-        }
     }
 }

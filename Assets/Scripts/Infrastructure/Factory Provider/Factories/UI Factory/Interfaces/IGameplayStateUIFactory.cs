@@ -16,5 +16,6 @@ namespace Infrastructure.Factory_Provider.Factories.UI_Factory.Interfaces
         Task<BoardView> CreateBoardView(Transform parent);
         Task<BoardCellView> CreateBoardCellView(Transform parent);
         Task<InventoryItemView> CreateInventoryItemView(Transform parent);
+        Task<ShopItemView> CreateShopItemView(Transform parent);
     }
 }

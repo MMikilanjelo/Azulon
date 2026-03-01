@@ -93,5 +93,14 @@ namespace Infrastructure.Factory_Provider.Factories.UI_Factory
 
             return view;
         }
+
+        public async Task<ShopItemView> CreateShopItemView(Transform parent)
+        {
+            var prefab = await _assetProvider.LoadAsync<GameObject>(AssetAddress.ShopItemView);
+
+            var view = Object.Instantiate(prefab, parent).GetComponent<ShopItemView>();
+
+            return view;
+        }
     }
 }

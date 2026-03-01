@@ -1,9 +1,11 @@
 ﻿using Application.State_Machine.Application_State_Machine.Models.Inventory_Models;
 using Application.State_Machine.Application_State_Machine.Models.Player_Model;
+using Application.State_Machine.Application_State_Machine.Models.Shop_Model;
 using Application.State_Machine.Global_State_Machine.Abstractions.Interfaces;
 using Application.State_Machine.Global_State_Machine.States.Boot_State;
 using Application.State_Machine.Global_State_Machine.States.Main_State;
 using Core.State_Machine;
+using Infrastructure.Asset_Provider;
 using Infrastructure.Drag_Position_Provider;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Services;
@@ -27,7 +29,9 @@ namespace Application.State_Machine.Global_State_Machine
             ITimeService timeService,
             IPopupStackMediator popupStackMediator,
             IPlayerModel playerModel,
-            IInventoryModel inventoryModel
+            IInventoryModel inventoryModel,
+            IShopModel shopModel,
+            IAssetProvider assetProvider
         )
         {
             var bootState = new BootState(
@@ -47,7 +51,9 @@ namespace Application.State_Machine.Global_State_Machine
                 uiRootMediator,
                 popupStackMediator,
                 playerModel,
-                inventoryModel
+                inventoryModel,
+                shopModel,
+                assetProvider
             );
 
             RegisterState(bootState);

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.State_Machine.Application_State_Machine.Models.Inventory_Models;
+using Application.State_Machine.Application_State_Machine.Models.Shop_Model;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Food_Model;
 using Core.Disposables;
@@ -30,6 +31,7 @@ namespace UI.Gameplay_State_UI.Mediator
         public IReadOnlyReactiveEvent<Vector2Int> BoardCellClicked => _boardCellClicked;
         public IReadOnlyReactiveEvent<EmptyEvent> FinishTurnClicked => _finishTurnClicked;
         public IReadOnlyReactiveEvent<InventoryItemModel> InventoryItemClicked => _inventoryItemClicked;
+        public IReadOnlyReactiveEvent<int> PlayerGoldChanged => _playerGoldChanged;
 
         private GameplayState _state;
         private IGameplayStateUIFactory _factory;
@@ -43,10 +45,13 @@ namespace UI.Gameplay_State_UI.Mediator
 
         private readonly Dictionary<BoardCellView, Vector2Int> _boardViews = new();
         private readonly Dictionary<InventoryItemView, InventoryItemModel> _inventoryViews = new();
+        private readonly Dictionary<ShopItemView, ShopItemModel> _shopViews = new();
 
         private readonly ReactiveEvent<Vector2Int> _boardCellClicked = new();
         private readonly ReactiveEvent<InventoryItemModel> _inventoryItemClicked = new();
+        private readonly ReactiveEvent<ShopItemModel> _shopItemClicked = new();
         private readonly ReactiveEvent<EmptyEvent> _finishTurnClicked = new();
+        private readonly ReactiveEvent<int> _playerGoldChanged = new();
 
         private CompositeDisposable _subscriptions = new();
 
@@ -74,8 +79,8 @@ namespace UI.Gameplay_State_UI.Mediator
             _state.InventoryItems.Removed.Subscribe(OnInventoryItemRemoved).AddTo(_subscriptions);
             _state.GridItems.Added.Subscribe(OnGridItemAdded).AddTo(_subscriptions);
             _state.GridItems.Removed.Subscribe(OnGridItemRemoved).AddTo(_subscriptions);
+            _state.PlayerGold.Subscribe(OnPlayerGoldChanged).AddTo(_subscriptions);
         }
-
 
         public void Dispose()
         {
@@ -117,6 +122,20 @@ namespace UI.Gameplay_State_UI.Mediator
             }
         }
 
+        public async Task FillShop(Transform parent, IReadOnlyList<ShopItemModel> items)
+        {
+            foreach (var item in items)
+            {
+                var view = await _factory.CreateShopItemView(parent);
+
+                view.Setup(item.Icon, item.Title, item.Description, item.Price);
+
+                view.Clicked.Subscribe(OnShopItemClicked);
+
+                _shopViews[view] = item;
+            }
+        }
+
         public void OnOpenShopButtonClicked() =>
             _popupStackMediator.Push(parent => _factory.CreateShopPopup(parent, this)).Forget();
 
@@ -126,14 +145,25 @@ namespace UI.Gameplay_State_UI.Mediator
         public void OnFinishTurnButtonClicked() =>
             _finishTurnClicked.Invoke(EmptyEvent.Default);
 
-        public void OnShopPopUpDimmerClicked() =>
-            _popupStackMediator.Pop().Forget();
+        public void OnShopPopUpDimmerClicked()
+        {
+            _shopViews.Clear();
 
-        public void OnInventoryOpened(Transform inventoryItemsParent)
+            _popupStackMediator.Pop().Forget();
+        }
+
+        public void OnShopOpened(Transform parent)
+        {
+            var items = _state.ShopItems;
+
+            FillShop(parent, items).Forget();
+        }
+
+        public void OnInventoryOpened(Transform parent)
         {
             var items = _state.InventoryItems;
 
-            FillInventory(inventoryItemsParent, items).Forget();
+            FillInventory(parent, items).Forget();
         }
 
         public void OnCloseInventoryButtonClicked()
@@ -148,6 +178,9 @@ namespace UI.Gameplay_State_UI.Mediator
 
         private void OnInventoryItemClicked(InventoryItemView view) =>
             _inventoryItemClicked.Invoke(_inventoryViews[view]);
+
+        private void OnShopItemClicked(ShopItemView view) =>
+            _shopItemClicked.Invoke(_shopViews[view]);
 
 
         private void OnInventoryItemRemoved(InventoryItemModel model)
@@ -184,5 +217,8 @@ namespace UI.Gameplay_State_UI.Mediator
 
             kvp.Key.Destroy();
         }
+
+        private void OnPlayerGoldChanged(int gold) =>
+            _playerGoldChanged.Invoke(gold);
     }
 }

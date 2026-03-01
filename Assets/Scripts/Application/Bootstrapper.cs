@@ -1,5 +1,6 @@
 ﻿using Application.State_Machine.Application_State_Machine.Models.Inventory_Models;
 using Application.State_Machine.Application_State_Machine.Models.Player_Model;
+using Application.State_Machine.Application_State_Machine.Models.Shop_Model;
 using Application.State_Machine.Global_State_Machine;
 using Application.State_Machine.Global_State_Machine.States.Boot_State;
 using Infrastructure.Asset_Provider;
@@ -42,6 +43,8 @@ namespace Application
 
             var inventoryModel = new InventoryModel();
 
+            var shopModel = new ShopModel();
+
             var stateMachine = new GlobalStateMachine(
                 sceneLoadingService,
                 factoryProvider,
@@ -52,7 +55,9 @@ namespace Application
                 timeService,
                 popupMediator,
                 playerModel,
-                inventoryModel
+                inventoryModel,
+                shopModel,
+                assetProvider
             );
 
             stateMachine.Enter<BootState>();

@@ -1,4 +1,4 @@
-namespace Application.State_Machine.Application_State_Machine.States.Gameplay_State.Enums
+namespace Application.State_Machine.Application_State_Machine.States.Gameplay_State.Definitions.Foods
 {
     public enum FoodId
     {

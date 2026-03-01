@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Definitions;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Definitions.Foods;
 using UnityEngine;
 
 namespace Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Food_Model.Strategy

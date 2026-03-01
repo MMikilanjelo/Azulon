@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aee57d7ddddc47628971066103aa10c5, type: 3}
+  m_Name: HoneyShopDefinition
+  m_EditorClassIdentifier: Assembly-CSharp::Application.State_Machine.Application_State_Machine.States.Gameplay_State.Definitions.Shop.ShopItemDefinition
+  <Category>k__BackingField: 1
+  <Icon>k__BackingField: {fileID: 21300000, guid: a412aea5e999f67419c2275728f18419, type: 3}
+  <ItemId>k__BackingField: Honey
+  <Description>k__BackingField: This Is A Cool Honey
+  <Title>k__BackingField: Honey
+  <Price>k__BackingField: 35

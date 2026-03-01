@@ -9,13 +9,10 @@ namespace Infrastructure.Asset_Provider
         public const string InventoryItemView = "UI/GameplayState/InventoryItemView";
         public const string BoardCellView = "UI/GameplayState/BoardCellView";
         public const string BoardView = "UI/GameplayState/BoardView";
-
-        public const string GridBlockView = "Plants/GridBlockView";
-
-        public const string Plant = "Plants/PlantView";
-
-        public const string AppleDefinition = "Definitions/Plants/AppleDefinition";
+        public const string ShopItemView = "UI/GameplayState/ShopItemView";
 
         public const string UIRootViewPath = "UI/UIRootView";
+        
+        public const string ShopCatalogDefinition = "Definitions/Shop/CatalogDefinition";
     }
 }

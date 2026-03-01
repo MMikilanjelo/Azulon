@@ -1,4 +1,3 @@
-using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Enums;
 using UnityEngine;
 
 namespace Application.State_Machine.Application_State_Machine.Models.Inventory_Models

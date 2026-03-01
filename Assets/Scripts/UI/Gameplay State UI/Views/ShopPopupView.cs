@@ -7,14 +7,15 @@ using UI.Components;
 using UI.Gameplay_State_UI.Mediator.Interfaces;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace UI.Gameplay_State_UI.Views
 {
     public class ShopPopupView : PopupViewBase
     {
         [SerializeField] private SlideAnimationComponent _slideAnimationComponent;
-
         [SerializeField] private DimmerComponent _dimmerComponent;
+        [SerializeField] private LayoutGroup _shopItemsLayoutGroup;
 
         private IShopPopupMediator _mediator;
 
@@ -32,6 +33,8 @@ namespace UI.Gameplay_State_UI.Views
             _dimmerComponent.Clicked
                 .Subscribe(OnDimmerClicked)
                 .AddTo(_subscriptions);
+            
+            _mediator.OnShopOpened(_shopItemsLayoutGroup.transform);
         }
 
         protected override void OnDestroyed() =>
