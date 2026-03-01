@@ -7,7 +7,6 @@ using Application.State_Machine.Global_State_Machine.States.Main_State;
 using Core.State_Machine;
 using Infrastructure.Asset_Provider;
 using Infrastructure.Color_Provider;
-using Infrastructure.Drag_Position_Provider;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Services;
 using Infrastructure.Services.Grid_Service;
@@ -26,7 +25,6 @@ namespace Application.State_Machine.Global_State_Machine
             IScreenStackMediator screenStackMediator,
             IUIRootMediator uiRootMediator,
             IGridService gridService,
-            IDragPositionProvider dragPositionProvider,
             ITimeService timeService,
             IPopupStackMediator popupStackMediator,
             IPlayerModel playerModel,
@@ -48,7 +46,6 @@ namespace Application.State_Machine.Global_State_Machine
                 factoryProvider,
                 screenStackMediator,
                 gridService,
-                dragPositionProvider,
                 timeService,
                 uiRootMediator,
                 popupStackMediator,

@@ -10,7 +10,6 @@ using Application.State_Machine.Global_State_Machine.Abstractions.Interfaces;
 using Core.State_Machine.States;
 using Infrastructure.Asset_Provider;
 using Infrastructure.Color_Provider;
-using Infrastructure.Drag_Position_Provider;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Services.Grid_Service;
 using Infrastructure.Update_Loop_Service;
@@ -31,7 +30,6 @@ namespace Application.State_Machine.Global_State_Machine.States.Main_State
             IFactoryProvider factoryProvider,
             IScreenStackMediator screenStackMediator,
             IGridService gridService,
-            IDragPositionProvider dragPositionProvider,
             ITimeService timeService,
             IUIRootMediator uiRootMediator,
             IPopupStackMediator popupStackMediator,
@@ -52,7 +50,6 @@ namespace Application.State_Machine.Global_State_Machine.States.Main_State
                 factoryProvider,
                 screenStackMediator,
                 gridService,
-                dragPositionProvider,
                 timeService,
                 uiRootMediator,
                 popupStackMediator,

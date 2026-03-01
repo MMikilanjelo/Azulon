@@ -6,7 +6,6 @@ using Application.State_Machine.Application_State_Machine.States.Gameplay_State;
 using Application.State_Machine.Application_State_Machine.States.Main_Menu_State;
 using Core.State_Machine;
 using Infrastructure.Color_Provider;
-using Infrastructure.Drag_Position_Provider;
 using Infrastructure.Factory_Provider;
 using Infrastructure.Services.Grid_Service;
 using Infrastructure.Update_Loop_Service;
@@ -23,7 +22,6 @@ namespace Application.State_Machine.Application_State_Machine
             IFactoryProvider factoryProvider,
             IScreenStackMediator screenStackMediator,
             IGridService gridService,
-            IDragPositionProvider dragPositionProvider,
             ITimeService timeService,
             IUIRootMediator uiRootMediator,
             IPopupStackMediator popupStackMediator,

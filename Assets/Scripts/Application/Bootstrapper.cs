@@ -5,9 +5,7 @@ using Application.State_Machine.Global_State_Machine;
 using Application.State_Machine.Global_State_Machine.States.Boot_State;
 using Infrastructure.Asset_Provider;
 using Infrastructure.Color_Provider;
-using Infrastructure.Drag_Position_Provider;
 using Infrastructure.Factory_Provider;
-using Infrastructure.Services;
 using Infrastructure.Services.Grid_Service;
 using Infrastructure.Services.Scene_Loading_Service;
 using Infrastructure.Update_Loop_Service;
@@ -32,7 +30,6 @@ namespace Application
 
             var timeService = CreateTimeService(assetProvider);
 
-            var dragPositionProvider = new DragPositionProvider();
 
             var factoryProvider = new FactoryProvider(assetProvider);
 
@@ -54,7 +51,6 @@ namespace Application
                 screenMediator,
                 screenMediator,
                 gridService,
-                dragPositionProvider,
                 timeService,
                 popupMediator,
                 playerModel,

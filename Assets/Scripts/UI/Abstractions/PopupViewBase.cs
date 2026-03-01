@@ -20,9 +20,9 @@ namespace UI.Abstractions
 
         public async Task Hide()
         {
-            gameObject.SetActive(false);
             OnHidden();
             await PlayOutAnimation();
+            gameObject.SetActive(false);
         }
 
         public virtual void Destroy()

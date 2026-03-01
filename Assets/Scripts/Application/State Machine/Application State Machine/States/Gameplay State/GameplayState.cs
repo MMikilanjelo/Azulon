@@ -9,6 +9,7 @@ using Application.State_Machine.Application_State_Machine.States.Gameplay_State.
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Models.Selection_Model;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Deselect_Inventory_Item_Use_Case;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Place_Item_From_Inventory_Use_Case;
+using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Purchase_Item_Use_Case;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Resolve_Grid_Use_Case;
 using Application.State_Machine.Application_State_Machine.States.Gameplay_State.Use_Cases.Select_Inventory_Item_Use_Case;
 using Core.Disposables;
@@ -53,6 +54,7 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
         private IDeselectInventoryItemUseCase _deselectInventoryItemUseCase;
         private IResolveGridUseCase _resolveGridUseCase;
         private ISelectInventoryItemUseCase _selectItemUseCase;
+        private IPurchaseItemUseCase _purchaseItemUseCase;
 
         private readonly ReactiveEvent<int> _purchaseSucceed = new();
         private readonly ReactiveEvent<EmptyEvent> _purchaseFailed = new();
@@ -88,6 +90,7 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
             _resolveGridUseCase ??= new ResolveGridUseCase(_gridModel, _playerModel);
             _selectItemUseCase ??= new SelectInventoryItemUseCase(_selectionModel);
             _deselectInventoryItemUseCase ??= new DeselectInventoryItemUseCase(_selectionModel);
+            _purchaseItemUseCase ??= new PurchaseItemUseCase(_playerModel, _inventoryModel);
 
             _uiMediator.InventoryItemClicked.Subscribe(OnInventoryItemSelected).AddTo(_subscriptions);
             _uiMediator.BoardCellClicked.Subscribe(cell => OnBoardCellClicked(cell).Forget()).AddTo(_subscriptions);
@@ -130,23 +133,16 @@ namespace Application.State_Machine.Application_State_Machine.States.Gameplay_St
 
         private void OnShopItemClicked(ShopItemModel itemToPurchaseModel)
         {
-            var isPurchaseSucceed = _playerModel.TryPurchase(itemToPurchaseModel.Price);
+            var isPurchased = _purchaseItemUseCase.Execute(itemToPurchaseModel);
 
-            if (!isPurchaseSucceed)
+            if (isPurchased)
             {
-                _purchaseFailed.Invoke(EmptyEvent.Default);
-                return;
+                _purchaseSucceed.Invoke(itemToPurchaseModel.Price);
             }
-
-            var inventoryModel = new InventoryItemModel(
-                itemToPurchaseModel.ItemId,
-                itemToPurchaseModel.Category,
-                itemToPurchaseModel.Icon
-            );
-
-            _inventoryModel.Add(inventoryModel);
-
-            _purchaseSucceed.Invoke(itemToPurchaseModel.Price);
+            else
+            {
+                _purchaseFailed.Invoke(new EmptyEvent());
+            }
         }
 
         private void OnInventoryItemSelected(InventoryItemModel item) =>
